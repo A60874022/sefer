@@ -3,7 +3,7 @@ from django.db import models
 
 class Trancription(models.Model):
     """Класс транскрипции текста."""
-    text = models.CharField()
+    text = models.TextField()
     keywords = models.ManyToManyField('Keywords')
     personalities = models.ManyToManyField('Personalities')
 
