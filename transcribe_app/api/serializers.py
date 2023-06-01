@@ -2,7 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from transcription.models import Trancription
+from transcription.models import Transcription
 
 
 class Base64AudioField(serializers.FileField):
@@ -21,5 +21,5 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     audio = Base64AudioField()
 
     class Meta:
-        model = Trancription
+        model = Transcription
         fields = ('audio', 'audio_url', 'text')

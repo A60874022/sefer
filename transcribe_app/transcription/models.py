@@ -6,7 +6,7 @@ from django.db import models
 #     pass
 
 
-class Trancription(models.Model):
+class Transcription(models.Model):
     """Класс транскрипции текста."""
     audio_url = models.URLField('backet_url_name', blank=True)
     audio = models.FileField('audio', upload_to='transcription/audio')
