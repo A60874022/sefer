@@ -1,6 +1,5 @@
 from django.db import models
 
-
 # class AudioFile(models.Model):
 #     """Класс загружаемого аудио файла."""
 #     pass
