@@ -12,4 +12,6 @@ router.register(
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('transcriptions/<int:pk>/get_transcription',
+         TranscriptionViewSet.as_view({'get': 'get_transcription'})),
 ]

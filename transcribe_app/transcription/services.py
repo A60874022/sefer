@@ -1,11 +1,14 @@
 import time
-# import json
 
 import boto3
 import requests
 from django.conf import settings
 
 from .models import Transcription
+
+# import json
+
+
 
 
 def get_audio_file(obj_id: int) -> str:
@@ -60,7 +63,7 @@ def create_transcription(obj_id: int) -> str:
         req = req.json()
         if req['done']:
             break
-        print('Not ready')
+        # print('Not ready')
     # print("Response:")
     # print(json.dumps(req, ensure_ascii=False, indent=2))
     result_text = []
