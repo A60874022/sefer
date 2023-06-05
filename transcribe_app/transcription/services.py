@@ -6,10 +6,6 @@ from django.conf import settings
 
 from .models import Transcription
 
-# import json
-
-
-
 
 def get_audio_file(obj_id: int) -> str:
     trancription = Transcription.objects.get(pk=obj_id)
