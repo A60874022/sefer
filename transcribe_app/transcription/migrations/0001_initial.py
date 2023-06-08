@@ -4,20 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Trancription',
+            name="Trancription",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('audio_url', models.URLField(verbose_name='backet_url_name')),
-                ('audio', models.FileField(upload_to='transcription/audio', verbose_name='audio')),
-                ('text', models.TextField(blank=True, verbose_name='transcription_text')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("audio_url", models.URLField(verbose_name="backet_url_name")),
+                (
+                    "audio",
+                    models.FileField(
+                        upload_to="transcription/audio", verbose_name="audio"
+                    ),
+                ),
+                (
+                    "text",
+                    models.TextField(blank=True, verbose_name="transcription_text"),
+                ),
             ],
         ),
     ]

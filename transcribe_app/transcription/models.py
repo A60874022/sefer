@@ -7,9 +7,10 @@ from django.db import models
 
 class Transcription(models.Model):
     """Класс транскрипции текста."""
-    audio_url = models.URLField('backet_url_name', blank=True)
-    audio = models.FileField('audio', upload_to='transcription/audio')
-    text = models.TextField('transcription_text', blank=True)
+
+    audio_url = models.URLField("backet_url_name", blank=True)
+    audio = models.FileField("audio", upload_to="transcription/audio")
+    text = models.TextField("transcription_text", blank=True)
     # keywords = models.ManyToManyField('Keywords')
     # personalities = models.ManyToManyField('Personalities')
 
