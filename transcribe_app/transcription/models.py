@@ -33,7 +33,7 @@ class TextBlock(models.Model):
     transcription = models.ForeignKey(
         Transcription,
         on_delete=models.CASCADE,
-        related_name="textblock",
+        related_name="textblocks",
     )
 
     def __str__(self):
