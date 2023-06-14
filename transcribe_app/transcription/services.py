@@ -7,6 +7,11 @@ from django.conf import settings
 from .models import Transcription
 
 
+TRANSCRIBE_API_URL = (
+    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+)
+
+
 def get_audio_file(obj_id: int) -> str:
     trancription = Transcription.objects.get(pk=obj_id)
     path_to_audio = str(trancription.audio)
@@ -37,9 +42,7 @@ def create_transcription(obj_id: int) -> list:
     """Функция для создания транскрипции текста."""
     upload_file_to_bucket(obj_id)
     file_url = create_bucket_url(obj_id)
-    post_url = (
-        "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
-    )
+    post_url = TRANSCRIBE_API_URL
     body = {
         "config": {
             "specification": {
