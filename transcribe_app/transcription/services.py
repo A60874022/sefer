@@ -12,6 +12,18 @@ TRANSCRIBE_API_URL = (
 )
 
 
+def create_text_blocks(text: list) -> list:
+    text_blocks = [[]]
+    start = text[0][0]
+    for curr_time, word in text:
+        if curr_time - start <= 10:
+            text_blocks[-1].append(word)
+        else:
+            text_blocks.append([word])
+            start = curr_time
+    return text_blocks
+
+
 def get_audio_file(obj_id: int) -> str:
     trancription = Transcription.objects.get(pk=obj_id)
     path_to_audio = str(trancription.audio)
@@ -68,4 +80,4 @@ def create_transcription(obj_id: int) -> list:
     for chunk in req["response"]["chunks"]:
         for word in chunk["alternatives"][0]["words"]:
             result_text.append((float(word["startTime"][:-1]), word["word"]))
-    return result_text
+    return create_text_blocks(result_text)

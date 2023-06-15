@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from transcription.models import Transcription
+from transcription.models import Transcription, TextBlock
 from transcription.services import create_bucket_url, create_transcription
 
 from .serializers import TranscriptionSerializer
@@ -24,12 +24,12 @@ class TranscriptionViewSet(ModelViewSet):
     def get_transcription(self, request, pk=None):
         transcription = get_object_or_404(Transcription, pk=pk)
         transcription.audio_url = create_bucket_url(pk)
-        transcription.text = create_transcription(pk)
-        transcription.save()
-        response = Response(
-            {
-                "audio_url": f"{transcription.audio_url}",
-                "text": f"{transcription.text}",
-            },
+        text = create_transcription(pk)
+        TextBlock.objects.bulk_create(
+            [
+                TextBlock(minute=i, text=" ".join(chunk), transcription=transcription)
+                for i, chunk in enumerate(text, start=1)
+            ]
         )
-        return response
+        serializer = self.get_serializer(transcription)
+        return Response(serializer.data)
