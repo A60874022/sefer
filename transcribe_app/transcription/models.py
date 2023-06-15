@@ -6,7 +6,7 @@ class Transcription(models.Model):
 
     audio_url = models.URLField("backet_url_name", blank=True)
     audio = models.FileField("audio", upload_to="transcription/audio")
-    text = models.TextField("transcription_text", blank=True)
+    # text = models.TextField("transcription_text", blank=True)
     # keywords = models.ManyToManyField('Keywords')
     # personalities = models.ManyToManyField('Personalities')
 
@@ -28,6 +28,7 @@ class Transcription(models.Model):
 
 
 class TextBlock(models.Model):
+    """Модель текстовых блоков."""
     minute = models.PositiveIntegerField("Minute")
     text = models.TextField("Text")
     transcription = models.ForeignKey(

@@ -3,7 +3,7 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from transcription.models import Transcription, TextBlock
+from transcription.models import TextBlock, Transcription
 
 
 class TextBlockSerializer(serializers.ModelSerializer):
@@ -39,4 +39,4 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("audio", "audio_url", "text", "textblocks")
+        fields = ("audio", "audio_url", "textblocks")

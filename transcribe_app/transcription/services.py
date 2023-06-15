@@ -7,16 +7,17 @@ from django.conf import settings
 from .models import Transcription
 
 
-TRANSCRIBE_API_URL = (
-    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
-)
-
-
 def create_text_blocks(text: list) -> list:
+    """
+    Функция разбивает результат, полученный от
+    API Yandex Speechkit, на списки по промежуткам
+    времени. В качестве вводных данных принимает список
+    из кортежей со значениями (время, слово).
+    """
     text_blocks = [[]]
     start = text[0][0]
     for curr_time, word in text:
-        if curr_time - start <= 10:
+        if curr_time - start <= 10:  # 10 - значение интервала(в сек.)
             text_blocks[-1].append(word)
         else:
             text_blocks.append([word])
@@ -25,6 +26,12 @@ def create_text_blocks(text: list) -> list:
 
 
 def get_audio_file(obj_id: int) -> str:
+    """
+    Функция возвращает путь к файлу в проекте.
+    Принимает в качестве аргумента pk модели транскрипции.
+    """
+    if not isinstance(obj_id, int):
+        raise ValueError('Invalid data, obj_id must be a integer.')
     trancription = Transcription.objects.get(pk=obj_id)
     path_to_audio = str(trancription.audio)
     return path_to_audio
@@ -46,15 +53,23 @@ def upload_file_to_bucket(obj_id: int) -> None:
 
 def create_bucket_url(obj_id: int) -> str:
     """Функция для генерации ссылки файла из бакета."""
+    if not isinstance(obj_id, int):
+        raise ValueError('Invalid data, obj_id must be a integer.')
     file_name = get_audio_file(obj_id).split("/")[-1]
     return f"https://storage.yandexcloud.net/{settings.YC_BUCKET_NAME}/{file_name}"
 
 
 def create_transcription(obj_id: int) -> list:
-    """Функция для создания транскрипции текста."""
-    upload_file_to_bucket(obj_id)
+    """
+    Функция для создания транскрипции текста.
+    Отправляет POST запрос к API Yandex Speechkit
+    Принимант ссылку аудио из модели транскрипции.
+    На выходе получаем список из слов разбитым по интервалам:
+    [[word1, word2, word3], [word4, word5, word6], ...].
+    """
+    upload_file_to_bucket(obj_id)  # загрузка файла в бакет
     file_url = create_bucket_url(obj_id)
-    post_url = TRANSCRIBE_API_URL
+    post_url = settings.TRANSCRIBE_API_URL
     body = {
         "config": {
             "specification": {

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from transcription.models import Transcription, TextBlock
+from transcription.models import TextBlock, Transcription
 
 
 # Register your models here.
@@ -9,7 +9,6 @@ class TranscriptionAdmin(admin.ModelAdmin):
     list_display = (
         "audio_url",
         "audio",
-        "text",
     )
 
 
