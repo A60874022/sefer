@@ -29,6 +29,7 @@ class Transcription(models.Model):
 
 class TextBlock(models.Model):
     """Модель текстовых блоков."""
+
     minute = models.PositiveIntegerField("Minute")
     text = models.TextField("Text")
     transcription = models.ForeignKey(
@@ -39,3 +40,13 @@ class TextBlock(models.Model):
 
     def __str__(self):
         return self.text
+
+    class Meta:
+        verbose_name = "text_block"
+        verbose_name_plural = "text_blocks"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["minute", "text", "transcription"],
+                name="uniq_transcriptions_text_block",
+            )
+        ]

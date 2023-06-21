@@ -17,7 +17,7 @@ def create_text_blocks(text: list) -> list:
     text_blocks = [[]]
     start = text[0][0]
     for curr_time, word in text:
-        if curr_time - start <= 10:  # 10 - значение интервала(в сек.)
+        if curr_time - start <= 60:  # 60 - значение интервала(в сек.)
             text_blocks[-1].append(word)
         else:
             text_blocks.append([word])
@@ -63,8 +63,8 @@ def create_transcription(obj_id: int) -> list:
     """
     Функция для создания транскрипции текста.
     Отправляет POST запрос к API Yandex Speechkit
-    Принимант ссылку аудио из модели транскрипции.
-    На выходе получаем список из слов разбитым по интервалам:
+    Принимает ссылку аудио из модели транскрипции.
+    На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
     upload_file_to_bucket(obj_id)  # загрузка файла в бакет
@@ -82,12 +82,11 @@ def create_transcription(obj_id: int) -> list:
     header = {"Authorization": "Bearer {}".format(settings.YC_IAM_TOKEN)}
     req = requests.post(post_url, headers=header, json=body)
     data = req.json()
-    id = data["id"]
 
     while True:
         time.sleep(1)
         GET = "https://operation.api.cloud.yandex.net/operations/{id}"
-        req = requests.get(GET.format(id=id), headers=header)
+        req = requests.get(GET.format(id=data["id"]), headers=header)
         req = req.json()
         if req["done"]:
             break

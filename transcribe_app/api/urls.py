@@ -4,7 +4,9 @@ from rest_framework.routers import DefaultRouter
 from .views import TranscriptionViewSet
 
 router = DefaultRouter()
-router.register(r"transcriptions", TranscriptionViewSet, basename="transcriptions")
+router.register(r"transcriptions",
+                TranscriptionViewSet,
+                basename="transcriptions")
 
 
 urlpatterns = [
