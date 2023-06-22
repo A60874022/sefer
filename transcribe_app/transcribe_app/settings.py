@@ -135,4 +135,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN")
 YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME")
-TRANSCRIBE_API_URL = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+TRANSCRIBE_API_URL = (
+    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+)

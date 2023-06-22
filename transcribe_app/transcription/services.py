@@ -31,14 +31,14 @@ def get_audio_file(obj_id: int) -> str:
     Принимает в качестве аргумента pk модели транскрипции.
     """
     if not isinstance(obj_id, int):
-        raise ValueError('Invalid data, obj_id must be a integer.')
-    trancription = Transcription.objects.get(pk=obj_id)
-    path_to_audio = str(trancription.audio)
+        raise ValueError("Invalid data, obj_id must be a integer.")
+    transcription = Transcription.objects.get(pk=obj_id)
+    path_to_audio = str(transcription.audio)
     return path_to_audio
 
 
 def upload_file_to_bucket(obj_id: int) -> None:
-    """Функция для загрузки файла в бакет."""
+    """Функция для загрузки файла в букет."""
     session = boto3.session.Session()
     s3 = session.client(
         service_name="s3", endpoint_url="https://storage.yandexcloud.net"
@@ -52,9 +52,9 @@ def upload_file_to_bucket(obj_id: int) -> None:
 
 
 def create_bucket_url(obj_id: int) -> str:
-    """Функция для генерации ссылки файла из бакета."""
+    """Функция для генерации ссылки файла из букета."""
     if not isinstance(obj_id, int):
-        raise ValueError('Invalid data, obj_id must be a integer.')
+        raise ValueError("Invalid data, obj_id must be a integer.")
     file_name = get_audio_file(obj_id).split("/")[-1]
     return f"https://storage.yandexcloud.net/{settings.YC_BUCKET_NAME}/{file_name}"
 
@@ -67,7 +67,7 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
-    upload_file_to_bucket(obj_id)  # загрузка файла в бакет
+    upload_file_to_bucket(obj_id)  # загрузка файла в букет
     file_url = create_bucket_url(obj_id)
     post_url = settings.TRANSCRIBE_API_URL
     body = {
@@ -85,8 +85,8 @@ def create_transcription(obj_id: int) -> list:
 
     while True:
         time.sleep(1)
-        GET = "https://operation.api.cloud.yandex.net/operations/{id}"
-        req = requests.get(GET.format(id=data["id"]), headers=header)
+        get_url = "https://operation.api.cloud.yandex.net/operations/{id}"
+        req = requests.get(get_url.format(id=data["id"]), headers=header)
         req = req.json()
         if req["done"]:
             break

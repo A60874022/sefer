@@ -31,9 +31,7 @@ class TranscriptionViewSet(ModelViewSet):
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
             [
-                TextBlock(minute=i,
-                          text=" ".join(chunk),
-                          transcription=transcription)
+                TextBlock(minute=i, text=" ".join(chunk), transcription=transcription)
                 for i, chunk in enumerate(text, start=1)
             ]
         )
@@ -43,5 +41,6 @@ class TranscriptionViewSet(ModelViewSet):
         #         text=" ".join(chunk),
         #         transcription=transcription
         #     )
+        transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)

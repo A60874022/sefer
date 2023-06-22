@@ -30,14 +30,14 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио."""
 
     audio = Base64AudioField()
-    textblocks = serializers.SerializerMethodField(read_only=True)
+    text_blocks = serializers.SerializerMethodField(read_only=True)
     audio_url = serializers.URLField(read_only=True)
 
-    def get_textblocks(self, obj):
-        queryset = obj.textblocks.all()
+    def get_text_blocks(self, obj):
+        queryset = obj.text_blocks.all()
         serializer = TextBlockSerializer(queryset, many=True)
         return serializer.data
 
     class Meta:
         model = Transcription
-        fields = ("audio", "audio_url", "textblocks")
+        fields = ("id", "name", "audio", "audio_url", "text_blocks")
