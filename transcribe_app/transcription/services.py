@@ -3,8 +3,18 @@ import time
 import boto3
 import requests
 from django.conf import settings
-
+from http import HTTPStatus
 from .models import Transcription
+
+
+def check_obj_id_type(obj_id: int) -> int:
+    """
+    Функция проверяет тип переданного obj_id.
+    Тип obj_id должен быть целочисленным числом.
+    """
+    if not isinstance(obj_id, int):
+        raise ValueError("Invalid data, obj_id must be a integer.")
+    return obj_id
 
 
 def create_text_blocks(text: list) -> list:
@@ -30,8 +40,7 @@ def get_audio_file(obj_id: int) -> str:
     Функция возвращает путь к файлу в проекте.
     Принимает в качестве аргумента pk модели транскрипции.
     """
-    if not isinstance(obj_id, int):
-        raise ValueError("Invalid data, obj_id must be a integer.")
+    check_obj_id_type(obj_id)
     transcription = Transcription.objects.get(pk=obj_id)
     path_to_audio = str(transcription.audio)
     return path_to_audio
@@ -39,6 +48,7 @@ def get_audio_file(obj_id: int) -> str:
 
 def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в букет."""
+    check_obj_id_type(obj_id)
     session = boto3.session.Session()
     s3 = session.client(
         service_name="s3", endpoint_url="https://storage.yandexcloud.net"
@@ -53,8 +63,7 @@ def upload_file_to_bucket(obj_id: int) -> None:
 
 def create_bucket_url(obj_id: int) -> str:
     """Функция для генерации ссылки файла из букета."""
-    if not isinstance(obj_id, int):
-        raise ValueError("Invalid data, obj_id must be a integer.")
+    check_obj_id_type(obj_id)
     file_name = get_audio_file(obj_id).split("/")[-1]
     return f"https://storage.yandexcloud.net/{settings.YC_BUCKET_NAME}/{file_name}"
 
@@ -67,7 +76,7 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
-    upload_file_to_bucket(obj_id)  # загрузка файла в букет
+    upload_file_to_bucket(obj_id)  # загрузка файла в бакет
     file_url = create_bucket_url(obj_id)
     post_url = settings.TRANSCRIBE_API_URL
     body = {
@@ -81,6 +90,8 @@ def create_transcription(obj_id: int) -> list:
     }
     header = {"Authorization": "Bearer {}".format(settings.YC_IAM_TOKEN)}
     req = requests.post(post_url, headers=header, json=body)
+    if req.status_code != HTTPStatus.OK:
+        raise requests.HTTPError("Произошла при отправке HTTP запроса.")
     data = req.json()
 
     while True:

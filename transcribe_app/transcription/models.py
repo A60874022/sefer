@@ -30,11 +30,15 @@ class TextBlock(models.Model):
     personalities = models.TextField("Персоналии", blank=True, null=True)
 
     class Meta:
-        verbose_name = "text_block"
-        verbose_name_plural = "text_blocks"
+        verbose_name = "Текстовый_блок"
+        verbose_name_plural = "Текстовые_блоки"
         constraints = [
             models.UniqueConstraint(
                 fields=["minute", "text", "transcription"],
                 name="uniq_transcriptions_text_block",
             )
         ]
+
+    def __str__(self) -> str:
+        return f"Название транскрипции: {self.transcription.name}.\
+                 Минута: {self.minute}"

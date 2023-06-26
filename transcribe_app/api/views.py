@@ -31,7 +31,9 @@ class TranscriptionViewSet(ModelViewSet):
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
             [
-                TextBlock(minute=i, text=" ".join(chunk), transcription=transcription)
+                TextBlock(minute=i,
+                          text=" ".join(chunk),
+                          transcription=transcription)
                 for i, chunk in enumerate(text, start=1)
             ]
         )
