@@ -37,12 +37,6 @@ class TranscriptionViewSet(ModelViewSet):
                 for i, chunk in enumerate(text, start=1)
             ]
         )
-        # for num, chunk in enumerate(text, start=1):
-        #     TextBlock.objects.get_or_create(
-        #         minute=num,
-        #         text=" ".join(chunk),
-        #         transcription=transcription
-        #     )
         transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)

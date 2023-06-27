@@ -1,4 +1,6 @@
+import os
 from django.db import models
+from django.dispatch import receiver
 
 
 class Transcription(models.Model):
@@ -8,12 +10,19 @@ class Transcription(models.Model):
     audio = models.FileField("Аудио", upload_to="transcription/audio")
     name = models.CharField("Название", max_length=60)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
     class Meta:
         verbose_name = "Транскрипция"
         verbose_name_plural = "Транскрипции"
+
+
+@receiver(models.signals.post_delete, sender=Transcription)
+def auto_delete_media_file(sender, instance, *args, **kwargs):
+    if instance.audio:
+        if os.path.isfile(instance.audio.path):
+            os.remove(instance.audio.path)
 
 
 class TextBlock(models.Model):

@@ -10,7 +10,7 @@ from .models import Transcription
 def check_obj_id_type(obj_id: int) -> int:
     """
     Функция проверяет тип переданного obj_id.
-    Тип obj_id должен быть целочисленным числом.
+    Тип obj_id должен быть целочисленным значением.
     """
     if not isinstance(obj_id, int):
         raise ValueError("Invalid data, obj_id must be a integer.")
@@ -47,7 +47,7 @@ def get_audio_file(obj_id: int) -> str:
 
 
 def upload_file_to_bucket(obj_id: int) -> None:
-    """Функция для загрузки файла в букет."""
+    """Функция для загрузки файла в бакет."""
     check_obj_id_type(obj_id)
     session = boto3.session.Session()
     s3 = session.client(
@@ -62,7 +62,7 @@ def upload_file_to_bucket(obj_id: int) -> None:
 
 
 def create_bucket_url(obj_id: int) -> str:
-    """Функция для генерации ссылки файла из букета."""
+    """Функция для генерации ссылки файла из бакета."""
     check_obj_id_type(obj_id)
     file_name = get_audio_file(obj_id).split("/")[-1]
     return f"https://storage.yandexcloud.net/{settings.YC_BUCKET_NAME}/{file_name}"
@@ -91,7 +91,7 @@ def create_transcription(obj_id: int) -> list:
     header = {"Authorization": "Bearer {}".format(settings.YC_IAM_TOKEN)}
     req = requests.post(post_url, headers=header, json=body)
     if req.status_code != HTTPStatus.OK:
-        raise requests.HTTPError("Произошла при отправке HTTP запроса.")
+        raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
     data = req.json()
 
     while True:
