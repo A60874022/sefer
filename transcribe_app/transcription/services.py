@@ -46,6 +46,20 @@ def get_audio_file(obj_id: int) -> str:
     return path_to_audio
 
 
+def delete_file_in_backet(obj_id: int) -> None:
+    """Функция для удаления файла из бакета."""
+    check_obj_id_type(obj_id)
+    session = boto3.session.Session()
+    s3 = session.client(
+        service_name="s3", endpoint_url="https://storage.yandexcloud.net"
+    )
+    file_name = get_audio_file(obj_id).split("/")[-1]
+    s3.delete_object(
+        Bucket=settings.YC_BUCKET_NAME,
+        Key=file_name,
+    )
+
+
 def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
     check_obj_id_type(obj_id)

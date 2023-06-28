@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from transcription.models import TextBlock, Transcription
-from transcription.services import create_bucket_url, create_transcription
+from transcription.services import create_bucket_url, create_transcription, \
+                                   delete_file_in_backet
 
 from .serializers import TranscriptionSerializer
 
@@ -18,6 +19,11 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        delete_file_in_backet(obj_id=instance.id)
+        return super().destroy(request, *args, **kwargs)
 
     @action(
         detail=False,
