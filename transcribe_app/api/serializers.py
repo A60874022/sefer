@@ -34,7 +34,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     audio_url = serializers.URLField(read_only=True)
 
     def get_text_blocks(self, obj):
-        queryset = obj.text_blocks.all()
+        queryset = TextBlock.objects.filter(transcription__id=obj.id)
         serializer = TextBlockSerializer(queryset, many=True)
         return serializer.data
 

@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_yasg",
-    "transcription",
-    "api",
+    "transcription.apps.TranscriptionConfig",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [

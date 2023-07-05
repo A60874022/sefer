@@ -13,7 +13,7 @@ def check_obj_id_type(obj_id: int) -> int:
     Тип obj_id должен быть целочисленным значением.
     """
     if not isinstance(obj_id, int):
-        raise ValueError("Invalid data, obj_id must be a integer.")
+        raise TypeError("Invalid data, obj_id type must be a integer.")
     return obj_id
 
 
@@ -24,6 +24,8 @@ def create_text_blocks(text: list) -> list:
     времени. В качестве вводных данных принимает список
     из кортежей со значениями (время, слово).
     """
+    if not isinstance(text, list):
+        raise TypeError('Invalid type. Text type must be a list.')
     text_blocks = [[]]
     start = text[0][0]
     for curr_time, word in text:

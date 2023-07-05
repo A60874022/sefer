@@ -4,8 +4,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from transcription.models import TextBlock, Transcription
-from transcription.services import create_bucket_url, create_transcription, \
-                                   delete_file_in_backet
+from transcription.services import (
+    create_bucket_url,
+    create_transcription,
+    delete_file_in_backet,
+)
 
 from .serializers import TranscriptionSerializer
 
@@ -37,9 +40,7 @@ class TranscriptionViewSet(ModelViewSet):
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
             [
-                TextBlock(minute=i,
-                          text=" ".join(chunk),
-                          transcription=transcription)
+                TextBlock(minute=i, text=" ".join(chunk), transcription=transcription)
                 for i, chunk in enumerate(text, start=1)
             ]
         )
