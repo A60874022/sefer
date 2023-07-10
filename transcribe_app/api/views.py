@@ -31,10 +31,10 @@ class TranscriptionViewSet(ModelViewSet):
     @action(
         detail=False,
         methods=["retrieve"],
-        url_name="get_transcription",
-        url_path="get_transcription",
+        url_name="create_transcription",
+        url_path="create_transcription",
     )
-    def get_transcription(self, request, pk=None):
+    def create_transcription(self, request, pk=None):
         transcription = get_object_or_404(Transcription, pk=pk)
         transcription.audio_url = create_bucket_url(pk)
         text = create_transcription(pk)
