@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
+    "djoser",
     "drf_yasg",
-    "transcription",
-    "api",
+    "transcription.apps.TranscriptionConfig",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -133,5 +135,18 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
+    )
+}
+
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN")
 YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME")
+TRANSCRIBE_API_URL = (
+    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+)

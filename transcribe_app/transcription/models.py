@@ -1,31 +1,53 @@
+import os
 from django.db import models
-
-# class AudioFile(models.Model):
-#     """Класс загружаемого аудио файла."""
-#     pass
+from django.dispatch import receiver
 
 
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    audio_url = models.URLField("backet_url_name", blank=True)
-    audio = models.FileField("audio", upload_to="transcription/audio")
-    text = models.TextField("transcription_text", blank=True)
-    # keywords = models.ManyToManyField('Keywords')
-    # personalities = models.ManyToManyField('Personalities')
+    audio_url = models.URLField("Backet_url_name", blank=True)
+    audio = models.FileField("Аудио", upload_to="transcription/audio")
+    name = models.CharField("Название", max_length=60)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "Транскрипция"
+        verbose_name_plural = "Транскрипции"
 
 
-# class Keywords(models.Model):
-#     """Ключевые слова."""
-#     name = models.TextField('Keyword_name', max_length=60)
+@receiver(models.signals.post_delete, sender=Transcription)
+def auto_delete_media_file(sender, instance, *args, **kwargs):
+    if instance.audio:
+        if os.path.isfile(instance.audio.path):
+            os.remove(instance.audio.path)
 
-#     def __str__(self):
-#         return self.name
 
+class TextBlock(models.Model):
+    """Модель текстовых блоков."""
 
-# class Personalities(models.Model):
-#     """Персоналии."""
-#     name = models.TextField('Personality_name')
+    minute = models.PositiveIntegerField("Минута")
+    text = models.TextField("Текст")
+    transcription = models.ForeignKey(
+        Transcription,
+        on_delete=models.CASCADE,
+        related_name="text_blocks",
+    )
+    keywords = models.TextField("Ключевые слова.", blank=True, null=True)
+    personalities = models.TextField("Персоналии", blank=True, null=True)
 
-#     def __str__(self):
-#         return self.name
+    class Meta:
+        verbose_name = "Текстовый_блок"
+        verbose_name_plural = "Текстовые_блоки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["minute", "text", "transcription"],
+                name="uniq_transcriptions_text_block",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"Название транскрипции: {self.transcription.name}.\
+                 Минута: {self.minute}"

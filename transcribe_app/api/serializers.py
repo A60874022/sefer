@@ -3,7 +3,15 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from transcription.models import Transcription
+from transcription.models import TextBlock, Transcription
+
+
+class TextBlockSerializer(serializers.ModelSerializer):
+    """Сериализатор текстового блока."""
+
+    class Meta:
+        model = TextBlock
+        fields = ("minute", "text")
 
 
 class Base64AudioField(serializers.FileField):
@@ -22,7 +30,14 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио."""
 
     audio = Base64AudioField()
+    text_blocks = serializers.SerializerMethodField(read_only=True)
+    audio_url = serializers.URLField(read_only=True)
+
+    def get_text_blocks(self, obj):
+        queryset = TextBlock.objects.filter(transcription__id=obj.id)
+        serializer = TextBlockSerializer(queryset, many=True)
+        return serializer.data
 
     class Meta:
         model = Transcription
-        fields = ("audio", "audio_url", "text")
+        fields = ("id", "name", "audio", "audio_url", "text_blocks")
