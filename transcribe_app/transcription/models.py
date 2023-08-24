@@ -34,11 +34,11 @@ class TextBlock(models.Model):
     transcription = models.ForeignKey(
         Transcription,
         on_delete=models.CASCADE,
-        related_name="text_blocks",
+        related_name="text_blocks", null=True
     )
     keywords = models.TextField("Ключевые слова.", blank=True, null=True)
-    personalities = models.TextField("Персоналии", blank=True, null=True)
-    cities = models.ManyToManyField("City", verbose_name="Города", blank=True)
+    personalities = models.ManyToManyField("Personalities", verbose_name="Персоналии", blank=True, null=True)
+    cities = models.ManyToManyField("City", verbose_name="Города", blank=True, null=True)
 
     class Meta:
         verbose_name = "Текстовый блок"
@@ -61,6 +61,7 @@ class City(models.Model):
     """Модель, представляющая город."""
 
     name = models.CharField("Город", max_length=100)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -68,3 +69,16 @@ class City(models.Model):
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города"
+
+class Personalities(models.Model):
+    """Модель, представляющая персоналии."""
+
+    name = models.CharField("Персоналия", max_length=100)
+    is_admin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Персоналия"
+        verbose_name_plural = "Персоналии"

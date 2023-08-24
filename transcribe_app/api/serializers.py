@@ -2,15 +2,32 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from transcription.models import City, TextBlock, Transcription
+from transcription.models import TextBlock, Transcription, Personalities, City
+from rest_framework.serializers import SerializerMethodField
+
+class CitySerializer(serializers.ModelSerializer):
+    """Сериализатор для городов."""
+
+    class Meta:
+        model = City
+        fields = ("name",)
+
+
+class PersonalitiesSerializer(serializers.ModelSerializer):
+    """Сериализатор для персоналий."""
+
+    class Meta:
+        model = Personalities
+        fields = ("name",)
 
 
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
 
-    cities = serializers.PrimaryKeyRelatedField(
-        queryset=City.objects.all(), many=True
-    )
+    # cities = serializers.PrimaryKeyRelatedField(
+    #     queryset=City.objects.all(), many=True)
+    # personalities = serializers.PrimaryKeyRelatedField(
+    #     queryset=Personalities.objects.all(), many=True)
 
     class Meta:
         model = TextBlock
