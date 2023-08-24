@@ -37,10 +37,15 @@ class TranscriptionViewSet(ModelViewSet):
         transcription = get_object_or_404(Transcription, pk=pk)
         transcription.audio_url = create_bucket_url(pk)
         text = create_transcription(pk)
+        added_by_admin = request.user.is_staff
+
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=i, text=" ".join(chunk), transcription=transcription
+                    minute=i,
+                    text=" ".join(chunk),
+                    transcription=transcription,
+                    added_by_admin=added_by_admin,
                 )
                 for i, chunk in enumerate(text, start=1)
             ]

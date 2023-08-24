@@ -39,6 +39,9 @@ class TextBlock(models.Model):
     keywords = models.TextField("Ключевые слова.", blank=True, null=True)
     personalities = models.TextField("Персоналии", blank=True, null=True)
     cities = models.ManyToManyField("City", verbose_name="Города", blank=True)
+    added_by_admin = models.BooleanField(
+        "Добавлено администратором", default=True
+    )
 
     class Meta:
         verbose_name = "Текстовый блок"

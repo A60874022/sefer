@@ -1,9 +1,10 @@
 import time
+from http import HTTPStatus
 
 import boto3
 import requests
 from django.conf import settings
-from http import HTTPStatus
+
 from .models import Transcription
 
 
