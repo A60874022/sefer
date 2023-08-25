@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
 from transcription.models import TextBlock, Transcription
 from transcription.services import (
     create_bucket_url,
@@ -37,16 +38,9 @@ class TranscriptionViewSet(ModelViewSet):
         transcription = get_object_or_404(Transcription, pk=pk)
         transcription.audio_url = create_bucket_url(pk)
         text = create_transcription(pk)
-        added_by_admin = request.user.is_staff
-
         TextBlock.objects.bulk_create(
             [
-                TextBlock(
-                    minute=i,
-                    text=" ".join(chunk),
-                    transcription=transcription,
-                    added_by_admin=added_by_admin,
-                )
+                TextBlock(minute=i, text=" ".join(chunk), transcription=transcription)
                 for i, chunk in enumerate(text, start=1)
             ]
         )

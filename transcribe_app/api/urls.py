@@ -5,9 +5,7 @@ from .views import TranscriptionViewSet
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
-router.register(
-    r"transcriptions", TranscriptionViewSet, basename="transcriptions"
-)
+router.register(r"transcriptions", TranscriptionViewSet, basename="transcriptions")
 
 
 urlpatterns = [
