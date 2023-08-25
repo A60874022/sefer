@@ -1,4 +1,5 @@
 import os
+
 from django.db import models
 from django.dispatch import receiver
 
@@ -37,10 +38,14 @@ class TextBlock(models.Model):
     )
     keywords = models.TextField("Ключевые слова.", blank=True, null=True)
     personalities = models.TextField("Персоналии", blank=True, null=True)
+    cities = models.ManyToManyField("City", verbose_name="Города", blank=True)
+    added_by_admin = models.BooleanField(
+        "Добавлено администратором", default=True
+    )
 
     class Meta:
-        verbose_name = "Текстовый_блок"
-        verbose_name_plural = "Текстовые_блоки"
+        verbose_name = "Текстовый блок"
+        verbose_name_plural = "Текстовые блоки"
         constraints = [
             models.UniqueConstraint(
                 fields=["minute", "text", "transcription"],
@@ -49,5 +54,20 @@ class TextBlock(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"Название транскрипции: {self.transcription.name}.\
-                 Минута: {self.minute}"
+        return (
+            f"Название транскрипции: {self.transcription.name}. "
+            f"Минута: {self.minute}"
+        )
+
+
+class City(models.Model):
+    """Модель, представляющая город."""
+
+    name = models.CharField("Город", max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"

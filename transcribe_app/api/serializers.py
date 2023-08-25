@@ -2,16 +2,19 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-
-from transcription.models import TextBlock, Transcription
+from transcription.models import City, TextBlock, Transcription
 
 
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
 
+    cities = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all(), many=True
+    )
+
     class Meta:
         model = TextBlock
-        fields = ("minute", "text")
+        fields = ("minute", "text", "cities", "personalities")
 
 
 class Base64AudioField(serializers.FileField):
