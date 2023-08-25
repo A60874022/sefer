@@ -2,6 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+
 from transcription.models import TextBlock, Transcription, Personalities, City
 from rest_framework.serializers import SerializerMethodField
 
@@ -21,17 +22,14 @@ class PersonalitiesSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
+
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
 
-    # cities = serializers.PrimaryKeyRelatedField(
-    #     queryset=City.objects.all(), many=True)
-    # personalities = serializers.PrimaryKeyRelatedField(
-    #     queryset=Personalities.objects.all(), many=True)
 
     class Meta:
         model = TextBlock
-        fields = ("minute", "text", "cities", "personalities")
+        fields = ("minute", "text")
 
 
 class Base64AudioField(serializers.FileField):

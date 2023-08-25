@@ -1,5 +1,4 @@
 import os
-
 from django.db import models
 from django.dispatch import receiver
 
@@ -37,12 +36,15 @@ class TextBlock(models.Model):
         related_name="text_blocks", null=True
     )
     keywords = models.TextField("Ключевые слова.", blank=True, null=True)
+
     personalities = models.ManyToManyField("Personalities", verbose_name="Персоналии", blank=True, null=True)
     cities = models.ManyToManyField("City", verbose_name="Города", blank=True, null=True)
 
+
+
     class Meta:
-        verbose_name = "Текстовый блок"
-        verbose_name_plural = "Текстовые блоки"
+        verbose_name = "Текстовый_блок"
+        verbose_name_plural = "Текстовые_блоки"
         constraints = [
             models.UniqueConstraint(
                 fields=["minute", "text", "transcription"],
@@ -51,6 +53,7 @@ class TextBlock(models.Model):
         ]
 
     def __str__(self) -> str:
+
         return (
             f"Название транскрипции: {self.transcription.name}. "
             f"Минута: {self.minute}"
@@ -82,3 +85,4 @@ class Personalities(models.Model):
     class Meta:
         verbose_name = "Персоналия"
         verbose_name_plural = "Персоналии"
+
