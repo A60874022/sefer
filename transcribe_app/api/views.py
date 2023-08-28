@@ -3,14 +3,36 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from transcription.models import TextBlock, Transcription
+from transcription.models import TextBlock, Transcription, Personalities, City
+
+
 from transcription.services import (
     create_bucket_url,
     create_transcription,
     delete_file_in_backet,
 )
 
-from .serializers import TranscriptionSerializer
+from .serializers import TranscriptionSerializer, TextBlockSerializer, PersonalitiesSerializer, CitySerializer
+
+
+class CityViewSet(ModelViewSet):
+    serializer_class = CitySerializer
+    queryset = City.objects.all()
+
+
+class PersonalitiesViewSet(ModelViewSet):
+    serializer_class = PersonalitiesSerializer
+    queryset = Personalities.objects.all()
+
+
+class TextBlockViewSet(ModelViewSet):
+    serializer_class = TextBlockSerializer
+    queryset = TextBlock.objects.all()
+
+
+class TextBlockViewSet(ModelViewSet):
+    serializer_class = TextBlockSerializer
+    queryset = TextBlock.objects.all()
 
 
 class TranscriptionViewSet(ModelViewSet):

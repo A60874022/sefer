@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import TextBlock, Transcription
+from .models import TextBlock, Transcription, City, Personalities
 
 
 class TextBlockInline(admin.StackedInline):
@@ -10,3 +10,7 @@ class TextBlockInline(admin.StackedInline):
 @admin.register(Transcription)
 class TranscriptionAdmin(admin.ModelAdmin):
     inlines = [TextBlockInline]
+
+
+admin.site.register(City)
+admin.site.register(Personalities)

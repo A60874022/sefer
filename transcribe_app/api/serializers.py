@@ -3,11 +3,29 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from transcription.models import TextBlock, Transcription
+from transcription.models import TextBlock, Transcription, Personalities, City
+from rest_framework.serializers import SerializerMethodField
+
+class CitySerializer(serializers.ModelSerializer):
+    """Сериализатор для городов."""
+
+    class Meta:
+        model = City
+        fields = ("name",)
+
+
+class PersonalitiesSerializer(serializers.ModelSerializer):
+    """Сериализатор для персоналий."""
+
+    class Meta:
+        model = Personalities
+        fields = ("name",)
+
 
 
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
+
 
     class Meta:
         model = TextBlock

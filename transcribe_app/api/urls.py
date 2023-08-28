@@ -1,12 +1,14 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import TranscriptionViewSet
+from .views import TranscriptionViewSet, TextBlockViewSet, PersonalitiesViewSet, CityViewSet
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
 router.register(r"transcriptions", TranscriptionViewSet, basename="transcriptions")
-
+router.register(r"personalities", PersonalitiesViewSet, basename="personalities")
+router.register(r"cities", CityViewSet, basename="cities")
+router.register(r"textblock", TextBlockViewSet, basename="textblock")
 
 urlpatterns = [
     path("", include(router.urls)),
