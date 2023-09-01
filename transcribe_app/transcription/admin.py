@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 
-from .models import TextBlock, Transcription, City, Personalities
+from .models import TextBlock, Transcription, City, Personalities, Keywords
 
 
 class TextBlockInline(admin.StackedInline):
@@ -11,6 +12,18 @@ class TextBlockInline(admin.StackedInline):
 class TranscriptionAdmin(admin.ModelAdmin):
     inlines = [TextBlockInline]
 
+class CityAdmin(ModelAdmin):
+    list_display = ('name', 'is_admin')
+    list_filter = ('name',)
 
-admin.site.register(City)
-admin.site.register(Personalities)
+class PersonalitiesAdmin(ModelAdmin):
+    list_display = ('name', 'is_admin')
+    list_filter = ('name',)
+
+class KeywordsAdmin(ModelAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+
+admin.site.register(City, CityAdmin)
+admin.site.register(Personalities, PersonalitiesAdmin)
+admin.site.register(Keywords, KeywordsAdmin)
