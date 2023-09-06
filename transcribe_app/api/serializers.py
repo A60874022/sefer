@@ -6,6 +6,7 @@ from rest_framework import serializers
 from transcription.models import TextBlock, Transcription, Personalities, City
 from rest_framework.serializers import SerializerMethodField
 
+
 class CitySerializer(serializers.ModelSerializer):
     """Сериализатор для городов."""
 
@@ -22,10 +23,8 @@ class PersonalitiesSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
-
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
-
 
     class Meta:
         model = TextBlock
@@ -59,3 +58,17 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transcription
         fields = ("id", "name", "audio", "audio_url", "text_blocks")
+
+
+class SplitTextBlockSerializer(serializers.Serializer):
+    """Сериализатор для разбивки для одного текстового блока"""
+
+    pass
+
+
+class JoinTextBlocksSerializer(serializers.Serializer):
+    """Cериализатор для объединения нескольких текстовых блоков в один."""
+
+    start = serializers.IntegerField()
+    end = serializers.IntegerField()
+    transcription_id = serializers.IntegerField()

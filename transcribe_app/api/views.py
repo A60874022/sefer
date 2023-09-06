@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
+from rest_framework import status
 from transcription.models import TextBlock, Transcription, Personalities, City
+from django.core.exceptions import ObjectDoesNotExist
 
 
 from transcription.services import (
@@ -12,7 +13,13 @@ from transcription.services import (
     delete_file_in_backet,
 )
 
-from .serializers import TranscriptionSerializer, TextBlockSerializer, PersonalitiesSerializer, CitySerializer
+from .serializers import (
+    TranscriptionSerializer,
+    TextBlockSerializer,
+    PersonalitiesSerializer,
+    CitySerializer,
+    JoinTextBlocksSerializer,
+)
 
 
 class CityViewSet(ModelViewSet):
@@ -62,10 +69,42 @@ class TranscriptionViewSet(ModelViewSet):
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
             [
-                TextBlock(minute=minute, text=" ".join(chunk), transcription=transcription)
+                TextBlock(
+                    minute=minute, text=" ".join(chunk), transcription=transcription
+                )
                 for minute, chunk in enumerate(text, start=1)
             ]
         )
         transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)
+
+
+@api_view(["POST"])
+def join_transcription_text_blocks(request):
+    serializer = JoinTextBlocksSerializer(data=request.data)
+    if serializer.is_valid():
+        trascription = get_object_or_404(
+            Transcription, pk=serializer.data.get("transcription_id")
+        )
+        text_blocks = trascription.text_blocks.all()
+        start_text_block = trascription.text_blocks.get(
+            minute=serializer.data.get("start")
+        )
+        start_text_block.text = " ".join(
+            [
+                text_block.text
+                for text_block in text_blocks[: serializer.data.get("end")]
+            ]
+        )
+        start_text_block.save()
+        for minute in range(
+            serializer.data.get("start") + 1, serializer.data.get("end") + 1
+        ):
+            try:
+                text_block = trascription.text_blocks.get(minute=minute)
+                text_block.delete()
+            except ObjectDoesNotExist:
+                continue
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
