@@ -69,6 +69,6 @@ class SplitTextBlockSerializer(serializers.Serializer):
 class JoinTextBlocksSerializer(serializers.Serializer):
     """Cериализатор для объединения нескольких текстовых блоков в один."""
 
-    start = serializers.IntegerField()
-    end = serializers.IntegerField()
-    transcription_id = serializers.IntegerField()
+    start = serializers.IntegerField()  # время начала блока
+    end = serializers.IntegerField()  # время окончания блока
+    transcription_id = serializers.IntegerField()  # id транскриции
