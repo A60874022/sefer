@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import TranscriptionViewSet, TextBlockViewSet, PersonalitiesViewSet, CityViewSet
+from .views import TranscriptionViewSet, TextBlockViewSet, PersonalitiesViewSet, CityViewSet, KeywordsViewSet
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
@@ -9,6 +9,7 @@ router.register(r"transcriptions", TranscriptionViewSet, basename="transcription
 router.register(r"personalities", PersonalitiesViewSet, basename="personalities")
 router.register(r"cities", CityViewSet, basename="cities")
 router.register(r"textblock", TextBlockViewSet, basename="textblock")
+router.register(r"keywords", KeywordsViewSet, basename="keywords")
 
 urlpatterns = [
     path("", include(router.urls)),

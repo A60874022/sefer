@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
-from transcription.models import TextBlock, Transcription, Personalities, City
+from transcription.models import TextBlock, Transcription, Personalities, City, Keywords
+from rest_framework import viewsets
 
 
 from transcription.services import (
@@ -12,7 +12,12 @@ from transcription.services import (
     delete_file_in_backet,
 )
 
-from .serializers import TranscriptionSerializer, TextBlockSerializer, PersonalitiesSerializer, CitySerializer
+from .serializers import TranscriptionSerializer, TextBlockSerializer, PersonalitiesSerializer, CitySerializer, KeywordsSerializer
+
+
+class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = KeywordsSerializer
+    queryset = Keywords.objects.all()
 
 
 class CityViewSet(ModelViewSet):
@@ -23,11 +28,6 @@ class CityViewSet(ModelViewSet):
 class PersonalitiesViewSet(ModelViewSet):
     serializer_class = PersonalitiesSerializer
     queryset = Personalities.objects.all()
-
-
-class TextBlockViewSet(ModelViewSet):
-    serializer_class = TextBlockSerializer
-    queryset = TextBlock.objects.all()
 
 
 class TextBlockViewSet(ModelViewSet):
