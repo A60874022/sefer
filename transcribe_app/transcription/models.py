@@ -25,6 +25,47 @@ def auto_delete_media_file(sender, instance, *args, **kwargs):
             os.remove(instance.audio.path)
 
 
+class City(models.Model):
+    """Модель, представляющая город."""
+
+    name = models.CharField("Город", max_length=100)
+    is_admin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+
+class Personalities(models.Model):
+    """Модель, представляющая персоналии."""
+
+    name = models.CharField("Персоналия", max_length=100)
+    is_admin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Персоналия"
+        verbose_name_plural = "Персоналии"
+
+
+class Keywords(models.Model):
+    """Модель, представляющая ключевые слова."""
+    name = models.CharField("Ключевое слово", max_length=100)
+    parent = models.ForeignKey("Keywords", on_delete=models.CASCADE, verbose_name="родитель", blank=True, null=True)
+   
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Ключевое слово"
+        verbose_name_plural = "Ключевые слова"
+
+
 class TextBlock(models.Model):
     """Модель текстовых блоков."""
 
@@ -33,14 +74,11 @@ class TextBlock(models.Model):
     transcription = models.ForeignKey(
         Transcription, on_delete=models.CASCADE, related_name="text_blocks", null=True
     )
-    keywords = models.TextField("Ключевые слова.", blank=True, null=True)
+    keywords = models.ManyToManyField(Keywords, verbose_name="Ключевые слова", blank=True, null=True)
 
-    personalities = models.ManyToManyField(
-        "Personalities", verbose_name="Персоналии", blank=True, null=True
-    )
-    cities = models.ManyToManyField(
-        "City", verbose_name="Города", blank=True, null=True
-    )
+    personalities = models.ManyToManyField(Personalities, verbose_name="Персоналии", blank=True, null=True)
+    cities = models.ManyToManyField(City, verbose_name="Города", blank=True, null=True)
+
 
     class Meta:
         verbose_name = "Текстовый_блок"
