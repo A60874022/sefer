@@ -135,6 +135,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Rest Framework Config ----------------------------
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -144,6 +146,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ),
 }
+
+
+# Yandex Cloud Config ---------------------------
 
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN")
 YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME")

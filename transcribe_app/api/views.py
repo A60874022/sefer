@@ -1,34 +1,27 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action, api_view
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
-from transcription.models import TextBlock, Transcription, Personalities, City, Keywords
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import viewsets
-
-
+from transcription.models import City, Keywords, Personalities, TextBlock, Transcription
 from transcription.services import (
     create_bucket_url,
     create_transcription,
     delete_file_in_backet,
 )
 
-
 from .serializers import (
-    TranscriptionSerializer,
-    TextBlockSerializer,
-    PersonalitiesSerializer,
     CitySerializer,
-    JoinTextBlocksSerializer,
     KeywordsSerializer,
+    PersonalitiesSerializer,
+    TextBlockSerializer,
+    TranscriptionSerializer,
 )
 
 
 class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = KeywordsSerializer
     queryset = Keywords.objects.all()
-
 
 
 class CityViewSet(ModelViewSet):
@@ -82,32 +75,3 @@ class TranscriptionViewSet(ModelViewSet):
         transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)
-
-
-@api_view(["POST"])
-def join_transcription_text_blocks(request):
-    serializer = JoinTextBlocksSerializer(data=request.data)
-
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    trascription_id = serializer.validated_data.get("transcription_id")
-    start_minute = serializer.validated_data.get("start_minute")
-    end_minute = serializer.validated_data.get("end_minute")
-
-    trascription = get_object_or_404(Transcription, pk=trascription_id)
-    text_blocks = trascription.text_blocks.all()
-    start_text_block = trascription.text_blocks.get(minute=start_minute)
-    text_to_append += " ".join(
-        [text_block.text for text_block in text_blocks[start_minute + 1 : end_minute]]
-    )
-    start_text_block += text_to_append
-    start_text_block.save()
-    for minute in range(start_minute + 1, end_minute + 1):
-        try:
-            text_block = trascription.text_blocks.get(minute=minute)
-            text_block.delete()
-        except ObjectDoesNotExist:
-            continue
-    response_data = TranscriptionSerializer(trascription).data
-    return Response(response_data, status=status.HTTP_201_CREATED)

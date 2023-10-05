@@ -2,14 +2,12 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    TranscriptionViewSet,
-    TextBlockViewSet,
-    PersonalitiesViewSet,
     CityViewSet,
     KeywordsViewSet,
-    join_transcription_text_blocks,
+    PersonalitiesViewSet,
+    TextBlockViewSet,
+    TranscriptionViewSet,
 )
-
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
@@ -27,11 +25,6 @@ urlpatterns = [
     ),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
-    path(
-        "join_trascription_text_blocks/",
-        join_transcription_text_blocks,
-        name="join_trenscription_text_blocks",
-    ),
 ]
 
 urlpatterns += docs_url
