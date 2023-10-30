@@ -1,9 +1,10 @@
 import time
+from http import HTTPStatus
 
 import boto3
 import requests
 from django.conf import settings
-from http import HTTPStatus
+
 from .models import Transcription
 
 
@@ -25,7 +26,7 @@ def create_text_blocks(text: list) -> list:
     из кортежей со значениями (время, слово).
     """
     if not isinstance(text, list):
-        raise TypeError('Invalid type. Text type must be a list.')
+        raise TypeError("Invalid type. Text type must be a list.")
     text_blocks = [[]]
     start = text[0][0]
     for curr_time, word in text:
