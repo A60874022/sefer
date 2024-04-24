@@ -3,20 +3,14 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from transcription.models import City, Keywords, Personalities, TextBlock, Transcription
-from transcription.services import (
-    create_bucket_url,
-    create_transcription,
-    delete_file_in_backet,
-)
 
-from .serializers import (
-    CitySerializer,
-    KeywordsSerializer,
-    PersonalitiesSerializer,
-    TextBlockSerializer,
-    TranscriptionSerializer,
-)
+from api.serializers import (CitySerializer, KeywordsSerializer,
+                             PersonalitiesSerializer, TextBlockSerializer,
+                             TranscriptionSerializer)
+from transcription.models import (City, Keywords, Personalities, TextBlock,
+                                  Transcription)
+from transcription.services import (create_bucket_url, create_transcription,
+                                    delete_file_in_backet)
 
 
 class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -67,7 +61,9 @@ class TranscriptionViewSet(ModelViewSet):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute, text=" ".join(chunk), transcription=transcription
+                    minute=minute,
+                    text=" ".join(chunk),
+                    transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]

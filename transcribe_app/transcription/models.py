@@ -7,7 +7,7 @@ from django.dispatch import receiver
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    audio_url = models.URLField("Backet_url_name", blank=True)
+    audio_url = models.URLField("Backet_url_name", blank=True, max_length=500)
     audio = models.FileField("Аудио", upload_to="transcription/audio")
     name = models.CharField("Название", max_length=60)
 
@@ -29,7 +29,7 @@ def auto_delete_media_file(sender, instance, *args, **kwargs):
 class City(models.Model):
     """Модель, представляющая город."""
 
-    name = models.CharField("Город", max_length=100)
+    name = models.CharField("Город", max_length=100, unique=True)
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
@@ -43,7 +43,7 @@ class City(models.Model):
 class Personalities(models.Model):
     """Модель, представляющая персоналии."""
 
-    name = models.CharField("Персоналия", max_length=100)
+    name = models.CharField("Персоналия", max_length=100, unique=True)
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
@@ -57,7 +57,7 @@ class Personalities(models.Model):
 class Keywords(models.Model):
     """Модель, представляющая ключевые слова."""
 
-    name = models.CharField("Ключевое слово", max_length=100)
+    name = models.CharField("Ключевое слово", max_length=100, unique=True)
     parent = models.ForeignKey(
         "Keywords",
         on_delete=models.CASCADE,
