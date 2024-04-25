@@ -85,7 +85,7 @@ WSGI_APPLICATION = "transcribe_app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv("DB_ENGINE", default="django.db.backends.postgresql"),
+        "ENGINE": os.getenv("DB_ENGINE", default="django.db.backends.postgresql"),  # noqa
         "NAME": os.getenv("DB_NAME", default="db.postgres"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
@@ -100,16 +100,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",  # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",  # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",  # noqa
     },
 ]
 
@@ -130,6 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "collected_static"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -146,8 +147,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        # 'rest_framework.permissions.IsAuthenticated',
-        "rest_framework.permissions.AllowAny",
+        'rest_framework.permissions.IsAuthenticated',
+        # "rest_framework.permissions.AllowAny",
     ),
 }
 
@@ -157,5 +158,5 @@ REST_FRAMEWORK = {
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN")
 YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME")
 TRANSCRIBE_API_URL = (
-    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+    "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"  # noqa
 )

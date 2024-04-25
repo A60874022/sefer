@@ -26,7 +26,7 @@ YC_BUCKET_NAME = 'you backet name'
 ```bash
 python -m venv venv
 pip install -r requirements.txt
-``` 
+```
 
 В директории с файлом manage.py установите миграции и создайте супер юзера:
 ```bash
@@ -44,5 +44,5 @@ python manage.py runserver
 
 Документация API доступна по адресу:
 ```bash
-localhot:8000/docs
+localhost:8000/api/redoc/
 ```
