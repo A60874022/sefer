@@ -7,12 +7,15 @@ from .views import (
     PersonalitiesViewSet,
     TextBlockViewSet,
     TranscriptionViewSet,
+    GetGlossaryAPIView
 )
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
-router.register(r"transcriptions", TranscriptionViewSet, basename="transcriptions")
-router.register(r"personalities", PersonalitiesViewSet, basename="personalities")
+router.register(r"transcriptions",
+                TranscriptionViewSet, basename="transcriptions")
+router.register(r"personalities",
+                PersonalitiesViewSet, basename="personalities")
 router.register(r"cities", CityViewSet, basename="cities")
 router.register(r"textblock", TextBlockViewSet, basename="textblock")
 router.register(r"keywords", KeywordsViewSet, basename="keywords")
@@ -23,6 +26,7 @@ urlpatterns = [
         "transcriptions/<int:pk>/create_transcription",
         TranscriptionViewSet.as_view({"get": "create_transcription"}),
     ),
+    path('glossary/', GetGlossaryAPIView.as_view(), name='glossary'),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
 ]
