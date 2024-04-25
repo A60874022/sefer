@@ -2,7 +2,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from drf_yasg.utils import swagger_auto_schema
+from .yasg import glossary_schema_dict
 
 from api.serializers import (CitySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
@@ -71,3 +74,20 @@ class TranscriptionViewSet(ModelViewSet):
         transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)
+
+
+class GetGlossaryAPIView(APIView):
+    """
+    Получение списков ключевых слов, городов и персоналий.
+    """
+    @swagger_auto_schema(responses=glossary_schema_dict)
+    def get(self, request):
+        glossary_data = {
+            'keywords': KeywordsSerializer(
+                Keywords.objects.all(), many=True).data,
+            'cities': CitySerializer(
+                City.objects.all(), many=True).data,
+            'personalities': PersonalitiesSerializer(
+                Personalities.objects.all(), many=True).data
+        }
+        return Response(glossary_data)
