@@ -13,21 +13,19 @@ class TranscriptionAdmin(admin.ModelAdmin):
     inlines = [TextBlockInline]
 
 
+@admin.register(City)
 class CityAdmin(ModelAdmin):
     list_display = ("name", "is_admin")
     list_filter = ("name",)
 
 
+@admin.register(Personalities)
 class PersonalitiesAdmin(ModelAdmin):
     list_display = ("name", "is_admin")
     list_filter = ("name",)
 
 
+@admin.register(Keywords)
 class KeywordsAdmin(ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
-
-
-admin.site.register(City, CityAdmin)
-admin.site.register(Personalities, PersonalitiesAdmin)
-admin.site.register(Keywords, KeywordsAdmin)
