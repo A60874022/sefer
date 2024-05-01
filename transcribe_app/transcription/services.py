@@ -82,7 +82,10 @@ def create_bucket_url(obj_id: int) -> str:
     """Функция для генерации ссылки файла из бакета."""
     check_obj_id_type(obj_id)
     file_name = get_audio_file(obj_id).split("/")[-1]
-    return f"https://storage.yandexcloud.net/{settings.YC_BUCKET_NAME}/{file_name}"
+    return (
+         "https://storage.yandexcloud.net/"
+         f"{settings.YC_BUCKET_NAME}/{file_name}"
+        )
 
 
 def create_transcription(obj_id: int) -> list:
