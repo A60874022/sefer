@@ -26,18 +26,40 @@ def auto_delete_media_file(sender, instance, *args, **kwargs):
             os.remove(instance.audio.path)
 
 
-class City(models.Model):
-    """Модель, представляющая город."""
+class Country(models.Model):
+    """Модель, представляющая Страны."""
 
-    name = models.CharField("Город", max_length=100, unique=True)
+    name = models.CharField("Страна", max_length=100, unique=True)
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Город"
-        verbose_name_plural = "Города"
+        verbose_name = "Страна"
+        verbose_name_plural = "Страны"
+
+
+class City(models.Model):
+    """Модель, представляющая Места."""
+
+    name = models.CharField("Место", max_length=100, unique=True)
+    is_admin = models.BooleanField(default=False)
+    parent = models.ForeignKey(
+        Country,
+        on_delete=models.DO_NOTHING,
+        verbose_name="Страна",
+        blank=True,
+        null=True,
+        related_name="cities"
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Место"
+        verbose_name_plural = "Места"
 
 
 class Personalities(models.Model):

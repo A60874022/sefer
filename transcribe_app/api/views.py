@@ -9,9 +9,9 @@ from .yasg import glossary_schema_dict
 
 from api.serializers import (CitySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionSerializer)
+                             TranscriptionSerializer, CountrySerializer)
 from transcription.models import (City, Keywords, Personalities, TextBlock,
-                                  Transcription)
+                                  Transcription, Country)
 from transcription.services import (create_bucket_url, create_transcription,
                                     delete_file_in_backet)
 
@@ -24,6 +24,11 @@ class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
 class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
+
+
+class CountryViewSet(ModelViewSet):
+    serializer_class = CountrySerializer
+    queryset = Country.objects.all()
 
 
 class PersonalitiesViewSet(ModelViewSet):

@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     CityViewSet,
+    CountryViewSet,
     KeywordsViewSet,
     PersonalitiesViewSet,
     TextBlockViewSet,
@@ -17,6 +18,7 @@ router.register(r"transcriptions",
 router.register(r"personalities",
                 PersonalitiesViewSet, basename="personalities")
 router.register(r"cities", CityViewSet, basename="cities")
+router.register(r"countries", CountryViewSet, basename="countries")
 router.register(r"textblock", TextBlockViewSet, basename="textblock")
 router.register(r"keywords", KeywordsViewSet, basename="keywords")
 
