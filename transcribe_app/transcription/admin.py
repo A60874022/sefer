@@ -16,8 +16,8 @@ class TranscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(City)
 class CityAdmin(ModelAdmin):
-    list_display = ("name", "parent", "is_admin")
-    list_filter = ("parent",)
+    list_display = ("name", "country", "is_admin")
+    list_filter = ("country",)
 
 
 @admin.register(Personalities)

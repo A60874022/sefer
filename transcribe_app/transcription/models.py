@@ -45,7 +45,7 @@ class City(models.Model):
 
     name = models.CharField("Место", max_length=100, unique=True)
     is_admin = models.BooleanField(default=False)
-    parent = models.ForeignKey(
+    country = models.ForeignKey(
         Country,
         on_delete=models.DO_NOTHING,
         verbose_name="Страна",

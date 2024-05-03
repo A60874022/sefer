@@ -20,11 +20,13 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ("id", "name",)
+        fields = ("id", "name", "country")
 
 
 class CountrySerializer(serializers.ModelSerializer):
-    cities = CitySerializer(many=True)
+    """Сериализатор для Стран."""
+
+    cities = CitySerializer(many=True, read_only=True)
 
     class Meta:
         model = Country
