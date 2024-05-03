@@ -8,6 +8,7 @@ from .views import (
     PersonalitiesViewSet,
     TextBlockViewSet,
     TranscriptionViewSet,
+    TranscriptionShortList,
     GetGlossaryAPIView
 )
 from .yasg import urlpatterns as docs_url
@@ -24,6 +25,8 @@ router.register(r"keywords", KeywordsViewSet, basename="keywords")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path('transcription_list/', TranscriptionShortList.as_view(),
+         name='transcription_list'),
     path(
         "transcriptions/<int:pk>/create_transcription",
         TranscriptionViewSet.as_view({"get": "create_transcription"}),

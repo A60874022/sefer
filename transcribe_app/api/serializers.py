@@ -106,3 +106,10 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class TranscriptionShortSerializer(serializers.ModelSerializer):
+    """Сериализатор для простого списка аудио."""
+    class Meta:
+        model = Transcription
+        fields = ("id", "name")
