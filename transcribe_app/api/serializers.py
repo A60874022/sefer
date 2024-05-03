@@ -4,11 +4,11 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from transcription.models import (City, Keywords, Personalities, TextBlock,
-                                  Transcription)
+                                  Transcription, Country)
 
 
 class KeywordsSerializer(serializers.ModelSerializer):
-    """Сериализатор для городов."""
+    """Сериализатор для ключевых слов."""
 
     class Meta:
         model = Keywords
@@ -20,7 +20,17 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ("id", "name",)
+        fields = ("id", "name", "country")
+
+
+class CountrySerializer(serializers.ModelSerializer):
+    """Сериализатор для Стран."""
+
+    cities = CitySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Country
+        fields = ("id", "name", "cities")
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
@@ -96,3 +106,10 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class TranscriptionShortSerializer(serializers.ModelSerializer):
+    """Сериализатор для простого списка аудио."""
+    class Meta:
+        model = Transcription
+        fields = ("id", "name")

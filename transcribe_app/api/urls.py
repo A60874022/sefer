@@ -3,10 +3,12 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     CityViewSet,
+    CountryViewSet,
     KeywordsViewSet,
     PersonalitiesViewSet,
     TextBlockViewSet,
     TranscriptionViewSet,
+    TranscriptionShortList,
     GetGlossaryAPIView
 )
 from .yasg import urlpatterns as docs_url
@@ -17,11 +19,14 @@ router.register(r"transcriptions",
 router.register(r"personalities",
                 PersonalitiesViewSet, basename="personalities")
 router.register(r"cities", CityViewSet, basename="cities")
+router.register(r"countries", CountryViewSet, basename="countries")
 router.register(r"textblock", TextBlockViewSet, basename="textblock")
 router.register(r"keywords", KeywordsViewSet, basename="keywords")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path('transcription_list/', TranscriptionShortList.as_view(),
+         name='transcription_list'),
     path(
         "transcriptions/<int:pk>/create_transcription",
         TranscriptionViewSet.as_view({"get": "create_transcription"}),

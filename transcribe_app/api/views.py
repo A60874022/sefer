@@ -4,14 +4,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListAPIView
+
 from drf_yasg.utils import swagger_auto_schema
 from .yasg import glossary_schema_dict
 
 from api.serializers import (CitySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionSerializer)
+                             TranscriptionSerializer, CountrySerializer,
+                             TranscriptionShortSerializer)
 from transcription.models import (City, Keywords, Personalities, TextBlock,
-                                  Transcription)
+                                  Transcription, Country)
 from transcription.services import (create_bucket_url, create_transcription,
                                     delete_file_in_backet)
 
@@ -24,6 +27,11 @@ class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
 class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
+
+
+class CountryViewSet(ModelViewSet):
+    serializer_class = CountrySerializer
+    queryset = Country.objects.all()
 
 
 class PersonalitiesViewSet(ModelViewSet):
@@ -91,3 +99,8 @@ class GetGlossaryAPIView(APIView):
                 Personalities.objects.all(), many=True).data
         }
         return Response(glossary_data)
+
+
+class TranscriptionShortList(ListAPIView):
+    queryset = Transcription.objects.all()
+    serializer_class = TranscriptionShortSerializer
