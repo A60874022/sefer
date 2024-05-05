@@ -27,34 +27,38 @@ jobs:
           push: true
           tags: vladislavrotvash/sefer_backend:latest
 
-  # deploy:
-  #   name: Deploy project on server
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - build_backend_and_push_to_docker_hub
-  #     - build_gateway_and_push_to_docker_hub
-  #   steps:
-  #     - name: Checkout the repo
-  #       uses: actions/checkout@v4
-  #     - name: Copy docker-compose.yml via ssh
-  #       uses: appleboy/scp-action@master
-  #       with:
-  #         host: ${{ secrets.HOST }}
-  #         username: ${{ secrets.USER }}
-  #         key: ${{ secrets.SSH_KEY }}
-  #         source: "docker-compose.production.yml"
-  #         target: "/home/${{ secrets.USER }}/diary-training"
-  #     - name: Executing remote ssh commands to deploy
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.HOST }}
-  #         username: ${{ secrets.USER }}
-  #         key: ${{ secrets.SSH_KEY }}
-  #         script: |
-  #           cd /home/${{ secrets.USER }}/diary-training/
-  #           sudo docker compose -f docker-compose.production.yml pull
-  #           sudo docker compose -f docker-compose.production.yml down
-  #           sudo docker compose -f docker-compose.production.yml up -d
-  #           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-  #           sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-  #           sudo docker compose -f docker-compose.production.yml exec backend python manage.py loaddata fixture/achievements_fixture.json
+  deploy:
+    name: Deploy project on server
+    runs-on: ubuntu-latest
+    needs:
+      - build_backend_and_push_to_docker_hub
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Copy docker-compose.prod-start.yml via ssh
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/docker-compose.prod-start.yml"
+          target: "/home/${{ secrets.USER }}/test/infra/"
+      - name: Copy nginx.conf via ssh
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/nginx.conf"
+          target: "/home/${{ secrets.USER }}/test/infra/"
+      # - name: Executing remote ssh commands to deploy
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USER }}
+      #     key: ${{ secrets.SSH_KEY }}
+      #     script: |
+      #       cd /home/${{ secrets.USER }}/diary-training/
+      #       sudo docker compose -f docker-compose-prod-start.yml pull
+      #       sudo docker compose -f docker-compose-prod-start.yml down
+      #       sudo docker compose -f docker-compose-prod-start.yml up -d
