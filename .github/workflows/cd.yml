@@ -35,22 +35,20 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
-      - name: Copy docker-compose-prod-start.yml via ssh
+      - name: Copy infra via ssh
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           source: "./infra/"
-          target: "~/test/"
-      # - name: Executing remote ssh commands to deploy
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USER }}
-      #     key: ${{ secrets.SSH_KEY }}
-      #     script: |
-      #       cd /home/${{ secrets.USER }}/diary-training/
-      #       sudo docker compose -f docker-compose-prod-start.yml pull
-      #       sudo docker compose -f docker-compose-prod-start.yml down
-      #       sudo docker compose -f docker-compose-prod-start.yml up -d
+          target: "~/sefer_foundation_back_end/"
+      - name: Executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/sefer_foundation_back_end/
+            ls
