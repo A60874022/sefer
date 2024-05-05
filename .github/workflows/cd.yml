@@ -41,16 +41,16 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "docker-compose-prod-start.yml"
-          target: "/home/${{ secrets.USER }}/test/infra/"
+          source: "./infra/docker-compose-prod-start.yml"
+          target: "~/test/infra/"
       - name: Copy nginx.conf via ssh
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "nginx.conf"
-          target: "/home/${{ secrets.USER }}/test/infra/"
+          source: "./infra/nginx.conf"
+          target: "~/test/infra/"
       # - name: Executing remote ssh commands to deploy
       #   uses: appleboy/ssh-action@master
       #   with:
