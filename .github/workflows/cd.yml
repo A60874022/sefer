@@ -3,7 +3,7 @@ name: Workflow For Build and Deploy
 on:
   push:
     branches:
-      - feature/add_CD
+      - master
 
 jobs:
   build_backend_and_push_to_docker_hub:
@@ -51,4 +51,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/sefer_foundation_back_end/
-            ls
+            sudo docker compose -f docker-compose-prod-start.yml pull
+            sudo docker compose -f docker-compose-prod-start.yml down
+            sudo docker compose -f docker-compose-prod-start.yml up -d
