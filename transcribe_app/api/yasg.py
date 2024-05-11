@@ -42,6 +42,16 @@ glossary_schema_dict = {
                         }
                     )
                 ),
+                "countries": openapi.Schema(
+                    type='array',
+                    items=openapi.Schema(
+                        type='object',
+                        properties={
+                            'id': openapi.Schema(type='integer'),
+                            'name': openapi.Schema(type='string'),
+                        }
+                    )
+                ),
                 "cities": openapi.Schema(
                     type='array',
                     items=openapi.Schema(

@@ -138,13 +138,17 @@ class TextBlock(models.Model):
         Transcription, on_delete=models.CASCADE, related_name="text_blocks"
     )
     keywords = models.ManyToManyField(
-        Keywords, verbose_name="Ключевые слова", blank=True
+        Keywords, blank=True, verbose_name="Ключевые слова"
     )
-
     personalities = models.ManyToManyField(
-        Personalities, verbose_name="Персоналии", blank=True
+        Personalities, blank=True, verbose_name="Персоналии"
     )
-    cities = models.ManyToManyField(City, verbose_name="Города", blank=True)
+    cities = models.ManyToManyField(
+        City, blank=True, verbose_name="Города"
+    )
+    countries = models.ManyToManyField(
+        Country, blank=True, verbose_name="Страны"
+    )
 
     class Meta:
         verbose_name = "Текстовый_блок"
