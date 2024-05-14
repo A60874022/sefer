@@ -11,7 +11,8 @@ from .yasg import glossary_schema_dict
 
 from api.serializers import (CitySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionSerializer, CountrySerializer,
+                             TranscriptionSerializer,
+                             CountryGlossarySerializer, CountrySerializer,
                              TranscriptionShortSerializer)
 from transcription.models import (City, Keywords, Personalities, TextBlock,
                                   Transcription, Country)
@@ -86,13 +87,15 @@ class TranscriptionViewSet(ModelViewSet):
 
 class GetGlossaryAPIView(APIView):
     """
-    Получение списков ключевых слов, городов и персоналий.
+    Получение списка тэгов.
     """
     @swagger_auto_schema(responses=glossary_schema_dict)
     def get(self, request):
         glossary_data = {
             'keywords': KeywordsSerializer(
                 Keywords.objects.all(), many=True).data,
+            'countries': CountryGlossarySerializer(
+                Country.objects.all(), many=True).data,
             'cities': CitySerializer(
                 City.objects.all(), many=True).data,
             'personalities': PersonalitiesSerializer(

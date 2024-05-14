@@ -1,6 +1,7 @@
 import base64
 
 from django.core.files.base import ContentFile
+from django.db.models import ManyToManyField
 from rest_framework import serializers
 
 from transcription.models import (City, Keywords, Personalities, TextBlock,
@@ -33,6 +34,14 @@ class CountrySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "cities")
 
 
+class CountryGlossarySerializer(serializers.ModelSerializer):
+    """Сериализатор для Стран в глоссарии."""
+
+    class Meta:
+        model = Country
+        fields = ("id", "name")
+
+
 class PersonalitiesSerializer(serializers.ModelSerializer):
     """Сериализатор для персоналий."""
 
@@ -46,7 +55,25 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextBlock
-        fields = ("id", "minute", "text")
+        fields = (
+            "id", "minute", "text",
+            "keywords", "personalities", "cities", "countries"
+        )
+
+
+class TextBlockGetSerializer(serializers.ModelSerializer):
+    """Сериализатор текстового блока."""
+    keywords = serializers.StringRelatedField(many=True)
+    personalities = serializers.StringRelatedField(many=True)
+    cities = serializers.StringRelatedField(many=True)
+    countries = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = TextBlock
+        fields = (
+            "id", "minute", "text",
+            "keywords", "personalities", "cities", "countries"
+        )
 
 
 class Base64AudioField(serializers.FileField):
@@ -75,12 +102,21 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "audio", "audio_url", "text_blocks")
 
     def create(self, validated_data):
-        """Создание текстовых блоков через пост запрос."""
-        text_blocks_data = validated_data.pop("text_blocks")
+        """
+        Создание транскрипции с текстовыми блоками через пост запрос.
+        Поля тегов добавляются отдельно после создания текстового блока.
+        """
+        data_text_blocks = validated_data.pop("text_blocks")
         transcription = Transcription.objects.create(**validated_data)
-        for text_block_data in text_blocks_data:
-            TextBlock.objects.create(transcription=transcription,
-                                     **text_block_data)
+        for block_data in data_text_blocks:
+            tag_fields = [field.name for field in TextBlock._meta.get_fields()
+                          if isinstance(field, ManyToManyField)]
+            tag_data = {field: block_data.pop(field)
+                        for field in tag_fields if field in block_data}
+            text_block = TextBlock.objects.create(transcription=transcription,
+                                                  **block_data)
+            for tag, data in tag_data.items():
+                text_block.__getattribute__(tag).set(data)
         return transcription
 
     def update(self, instance, validated_data):
@@ -98,11 +134,19 @@ class TranscriptionSerializer(serializers.ModelSerializer):
                                                 instance.audio_url)
 
         if "text_blocks" in validated_data:
-            text_blocks_data = validated_data.pop("text_blocks")
+            data_text_blocks = validated_data.pop("text_blocks")
             instance.text_blocks.all().delete()  # Удаляем старые text_blocks
-            for text_block_data in text_blocks_data:
-                TextBlock.objects.create(transcription=instance,
-                                         **text_block_data)
+            for block_data in data_text_blocks:
+                tag_fields = [
+                    field.name for field in TextBlock._meta.get_fields()
+                    if isinstance(field, ManyToManyField)
+                ]
+                tag_data = {field: block_data.pop(field)
+                            for field in tag_fields if field in block_data}
+                text_block = TextBlock.objects.create(transcription=instance,
+                                                      **block_data)
+                for tag, data in tag_data.items():
+                    text_block.__getattribute__(tag).set(data)
 
         instance.save()
         return instance
