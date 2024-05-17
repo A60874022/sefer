@@ -4,6 +4,7 @@ volumes:
   pg_data:
   media:
   static:
+  frontend_build:
 
 services:
 
@@ -21,9 +22,7 @@ services:
       start_period: 3s
 
   backend:
-    build:
-      context: ../
-      dockerfile: Dockerfile
+    image: vladislavrotvash/sefer_backend
     env_file: .env
     restart: always
     depends_on:
@@ -43,6 +42,13 @@ services:
       - backend
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - frontend_build:/usr/share/nginx/html/
       - static:/var/html/static/
       - media:/var/html/media/
+
+  frontend:
+    env_file: .env
+    image: acunathink/sefer_frontend
+    volumes:
+      - frontend_build:/app/result_build/
 
