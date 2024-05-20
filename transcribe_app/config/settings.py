@@ -1,10 +1,9 @@
 import os
-from pathlib import Path
 from distutils.util import strtobool
+from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -75,7 +74,7 @@ DATABASES = {
     "default": {
         "ENGINE": os.getenv(
             "DB_ENGINE", default="django.db.backends.postgresql"
-            ),
+        ),
         "NAME": os.getenv("POSTGRES_DB", default="db.postgres"),
         "USER": os.getenv("POSTGRES_USER", "postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
@@ -128,13 +127,13 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
-   "SECURITY_DEFINITIONS": {
-      "Token": {
+    "SECURITY_DEFINITIONS": {
+        "Token": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
-      }
-   }
+        }
+    }
 }
 
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN", default="you_iam_token")

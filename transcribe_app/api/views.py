@@ -1,23 +1,22 @@
+from api.serializers import (CitySerializer, CountryGlossarySerializer,
+                             CountrySerializer, KeywordsSerializer,
+                             PersonalitiesSerializer, TextBlockSerializer,
+                             TranscriptionSerializer,
+                             TranscriptionShortSerializer)
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import ListAPIView
-
-from drf_yasg.utils import swagger_auto_schema
-from .yasg import glossary_schema_dict
-
-from api.serializers import (CitySerializer, KeywordsSerializer,
-                             PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionSerializer,
-                             CountryGlossarySerializer, CountrySerializer,
-                             TranscriptionShortSerializer)
-from transcription.models import (City, Keywords, Personalities, TextBlock,
-                                  Transcription, Country)
+from transcription.models import (City, Country, Keywords, Personalities,
+                                  TextBlock, Transcription)
 from transcription.services import (create_bucket_url, create_transcription,
                                     delete_file_in_backet)
+
+from .yasg import glossary_schema_dict
 
 
 class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):

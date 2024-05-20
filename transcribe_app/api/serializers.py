@@ -3,9 +3,8 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import ManyToManyField
 from rest_framework import serializers
-
-from transcription.models import (City, Keywords, Personalities, TextBlock,
-                                  Transcription, Country)
+from transcription.models import (City, Country, Keywords, Personalities,
+                                  TextBlock, Transcription)
 
 
 class KeywordsSerializer(serializers.ModelSerializer):
