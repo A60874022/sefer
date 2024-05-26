@@ -83,9 +83,9 @@ def create_bucket_url(obj_id: int) -> str:
     check_obj_id_type(obj_id)
     file_name = get_audio_file(obj_id).split("/")[-1]
     return (
-         "https://storage.yandexcloud.net/"
-         f"{settings.YC_BUCKET_NAME}/{file_name}"
-        )
+        "https://storage.yandexcloud.net/"
+        f"{settings.YC_BUCKET_NAME}/{file_name}"
+    )
 
 
 def create_transcription(obj_id: int) -> list:

@@ -1,16 +1,9 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (
-    CityViewSet,
-    CountryViewSet,
-    KeywordsViewSet,
-    PersonalitiesViewSet,
-    TextBlockViewSet,
-    TranscriptionViewSet,
-    TranscriptionShortList,
-    GetGlossaryAPIView
-)
+from .views import (CityViewSet, CountryViewSet, GetGlossaryAPIView,
+                    KeywordsViewSet, PersonalitiesViewSet, TextBlockViewSet,
+                    TranscriptionShortList, TranscriptionViewSet)
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
