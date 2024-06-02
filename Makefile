@@ -19,7 +19,7 @@ collectstatic-prod: # Собрать статику Django
 createsuperuser-prod: # Создать супер пользователя
 	python transcribe_app/manage.py createsuperuser --noinput
 
-project-start-prod-in-container: # Инициализация проекта в контерейнере
+project-start-prod-in-container: # Запуск проекта в контерейнере
 	make migrate-prod collectstatic-prod start-server-prod
 
 project-init-prod-in-container: # Инициализация проекта в контерейнере
