@@ -54,5 +54,5 @@ jobs:
             sudo docker compose -f docker-compose-prod-start.yml pull
             sudo docker compose -f docker-compose-prod-start.yml down
             sudo docker compose -f docker-compose-prod-start.yml up -d
-            sudo docker image prune -f
+            sudo docker image prune -af
 
