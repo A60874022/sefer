@@ -22,7 +22,7 @@ services:
       start_period: 3s
 
   backend:
-    image: vladislavrotvash/sefer_backend
+    image: vladislavrotvash/sefer_backend:latest
     env_file: .env
     restart: always
     depends_on:
