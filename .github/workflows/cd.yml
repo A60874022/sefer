@@ -51,9 +51,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/sefer_foundation_back_end/infra/
-            sudo docker-compose -f docker-compose-prod-start.yml stop
+            sudo docker compose -f docker-compose-prod-start.yml stop
             sudo docker image rm vladislavrotvash/sefer_backend:latest
-            sudo docker-compose -f docker-compose-prod-start.yml pull
-            sudo docker-compose -f docker-compose-prod-start.yml up -d
+            sudo docker compose -f docker-compose-prod-start.yml pull
+            sudo docker compose -f docker-compose-prod-start.yml up -d
             sudo docker image prune -af
 
