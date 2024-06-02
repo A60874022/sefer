@@ -2,8 +2,9 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (CityViewSet, CountryViewSet, GetGlossaryAPIView,
-                    KeywordsViewSet, PersonalitiesViewSet, TextBlockViewSet,
-                    TranscriptionShortList, TranscriptionViewSet)
+                    KeywordsViewSet, PersonalitiesViewSet, Test,
+                    TextBlockViewSet, TranscriptionShortList,
+                    TranscriptionViewSet)
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
@@ -27,6 +28,7 @@ urlpatterns = [
     path('glossary/', GetGlossaryAPIView.as_view(), name='glossary'),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
+    path("test/", Test.as_view(), name='test')
 ]
 
 urlpatterns += docs_url
