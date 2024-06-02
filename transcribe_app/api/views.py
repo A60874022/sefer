@@ -91,14 +91,10 @@ class GetGlossaryAPIView(APIView):
     @swagger_auto_schema(responses=glossary_schema_dict)
     def get(self, request):
         glossary_data = {
-            'keywords': KeywordsSerializer(
-                Keywords.objects.all(), many=True).data,
-            'countries': CountryGlossarySerializer(
-                Country.objects.all(), many=True).data,
-            'cities': CitySerializer(
-                City.objects.all(), many=True).data,
-            'personalities': PersonalitiesSerializer(
-                Personalities.objects.all(), many=True).data
+            'keywords': KeywordsSerializer(Keywords.objects.all(), many=True).data,
+            'countries': CountryGlossarySerializer(Country.objects.all(), many=True).data,
+            'cities': CitySerializer(City.objects.all(), many=True).data,
+            'personalities': PersonalitiesSerializer(Personalities.objects.all(), many=True).data
         }
         return Response(glossary_data)
 
