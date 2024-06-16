@@ -49,7 +49,7 @@ def get_audio_file(obj_id: int) -> str:
     return path_to_audio
 
 
-def delete_file_in_backet(obj_id: int) -> None:
+'''def delete_file_in_backet(obj_id: int) -> None:
     """Функция для удаления файла из бакета."""
     check_obj_id_type(obj_id)
     session = boto3.session.Session()
@@ -60,10 +60,10 @@ def delete_file_in_backet(obj_id: int) -> None:
     s3.delete_object(
         Bucket=settings.YC_BUCKET_NAME,
         Key=file_name,
-    )
+    )'''
 
 
-def upload_file_to_bucket(obj_id: int) -> None:
+'''def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
     check_obj_id_type(obj_id)
     session = boto3.session.Session()
@@ -85,7 +85,7 @@ def create_bucket_url(obj_id: int) -> str:
     return (
         "https://storage.yandexcloud.net/"
         f"{settings.YC_BUCKET_NAME}/{file_name}"
-    )
+    )'''
 
 
 def create_transcription(obj_id: int) -> list:
@@ -96,8 +96,8 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
-    upload_file_to_bucket(obj_id)  # загрузка файла в бакет
-    file_url = create_bucket_url(obj_id)
+    #upload_file_to_bucket(obj_id)  # загрузка файла в бакет
+    file_url = get_audio_file(obj_id)
     post_url = settings.TRANSCRIBE_API_URL
     body = {
         "config": {

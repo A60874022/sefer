@@ -88,17 +88,18 @@ class Base64AudioField(serializers.FileField):
 
 
 class TranscriptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для загрузки аудио."""
+    """Сериализатор для загрузки аудио и его
+    перевода в текстовый вид."""
 
     audio = Base64AudioField()
     text_blocks = TextBlockSerializer(
         many=True
     )  # Вложенный сериализатор для text_blocks
-    audio_url = serializers.URLField()
+
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "audio_url", "text_blocks")
+        fields = ("id", "name", "audio", "text_blocks")
 
     def create(self, validated_data):
         """
@@ -129,8 +130,8 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         instance.id = validated_data.get("id", instance.id)
         instance.name = validated_data.get("name", instance.name)
         instance.audio = validated_data.get("audio", instance.audio)
-        instance.audio_url = validated_data.get("audio_url",
-                                                instance.audio_url)
+        #instance.audio_url = validated_data.get("audio_url",
+        #                                        instance.audio_url)
 
         if "text_blocks" in validated_data:
             data_text_blocks = validated_data.pop("text_blocks")
@@ -150,6 +151,16 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class TranscriptionFileSerializer(serializers.ModelSerializer):
+    audio = Base64AudioField(required=False,default='some_default_value')
+   
+
+    class Meta:
+        model = Transcription
+        fields = ("id", "audio", "name", "code", "transcription_status")
+    
+  
+ 
 
 class TranscriptionShortSerializer(serializers.ModelSerializer):
     """Сериализатор для простого списка аудио."""
