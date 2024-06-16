@@ -116,8 +116,8 @@ def create_transcription(obj_id: int) -> list:
 
     while True:
         time.sleep(1)
-        get_url = "https://operation.api.cloud.yandex.net/operations/{id}"
-        req = requests.get(get_url.format(id=data["id"]), headers=header)
+        get_url = get_audio_file(obj_id)#"https://operation.api.cloud.yandex.net/operations/{id}"
+        req = requests.get(get_url, headers=header)
         req = req.json()
         if req["done"]:
             break
