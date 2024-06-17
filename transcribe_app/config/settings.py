@@ -1,4 +1,6 @@
 import os
+
+from datetime import timedelta
 from distutils.util import strtobool
 from pathlib import Path
 
@@ -26,6 +28,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "rest_framework",
     "djoser",
+    'rest_framework_simplejwt',
     "drf_yasg",
     "users.apps.UsersConfig",
     "transcription.apps.TranscriptionConfig",
@@ -75,10 +78,10 @@ DATABASES = {
         "ENGINE": os.getenv(
             "DB_ENGINE", default="django.db.backends.postgresql"
         ),
-        "NAME": os.getenv("POSTGRES_DB", default="db.postgres"),
+        "NAME": os.getenv("POSTGRES_DB", default="postgres4"),
         "USER": os.getenv("POSTGRES_USER", "postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.getenv("DB_HOST", default="db"),
+        "HOST": os.getenv("DB_HOST", default="localhost"),
         "PORT": os.getenv("DB_PORT", default="5432"),
         "TIME_ZONE": TIME_ZONE,
     }
@@ -113,27 +116,36 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DJOSER = {
-    "TOKEN_MODEL": "users.models.CastomToken",
-}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "users.authentication.CastomTokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
 }
 
+SIMPLE_JWT = {
+    #'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
 SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Token": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
         }
-    }
+    },
 }
 
 YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN", default="you_iam_token")
