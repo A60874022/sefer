@@ -3,7 +3,7 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer,
-                             TranscriptionFileSerializer)
+                             TranscriptionFileSerializer, TranscriptionBaseSerializer)
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -15,7 +15,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import mixins
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
-from transcription.services import create_transcription,  get_audio_file   
+from transcription.services import (create_transcription,  
+                                    get_audio_file,
+                                    create_bucket_url,
+                                    delete_file_in_backet)   
                                     
 
 from .yasg import glossary_schema_dict
@@ -55,12 +58,14 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
+    
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        #delete_file_in_backet(obj_id=instance.id)
+        delete_file_in_backet(obj_id=instance.id)
         return super().destroy(request, *args, **kwargs)
 
+    
     @action(
         detail=False,
         methods=["retrieve"],
@@ -69,7 +74,7 @@ class TranscriptionViewSet(ModelViewSet):
     )
     def create_transcription(self, request, pk=None):
         transcription = get_object_or_404(Transcription, pk=pk)
-        #transcription.audio_url = create_bucket_url(pk)
+        transcription.audio_url = create_bucket_url(pk)
         transcription.audio =  get_audio_file(pk)
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
@@ -110,11 +115,16 @@ class TranscriptionShortList(ListAPIView):
     serializer_class = TranscriptionShortSerializer
 
 
-class TranscriptionSaveViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
-                          viewsets.GenericViewSet):
+class TranscriptionSaveViewSet(ModelViewSet):
     """
-    Предназначен для сохранения, удаления, обновления файлов.
+    Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
     """
      
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionFileSerializer
+
+    def get_serializer_class(self):
+        """Функция выбора класса - сериализатора в зависимости от метода"""
+        if self.request.method == "GET":
+            return TranscriptionBaseSerializer
+        return TranscriptionFileSerializer

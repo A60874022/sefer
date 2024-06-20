@@ -136,7 +136,7 @@ SWAGGER_SETTINGS = {
     }
 }
 
-YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN", default="you_iam_token")
-YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME", default="you_backet_name")
+YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN", default="AQVNzQZst92-SQYgP5zowxzTa7L6GrG0FT3OXhtZ")
+YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME", default="sefer")
 TRANSCRIBE_API_URL = ("https://transcribe.api.cloud.yandex.net"
                       "/speech/stt/v2/longRunningRecognize")

@@ -1,6 +1,6 @@
 import time
 from http import HTTPStatus
-
+import os
 import boto3
 import requests
 from django.conf import settings
@@ -49,9 +49,9 @@ def get_audio_file(obj_id: int) -> str:
     return path_to_audio
 
 
-'''def delete_file_in_backet(obj_id: int) -> None:
+def delete_file_in_backet(obj_id: int) -> None:
     """Функция для удаления файла из бакета."""
-    check_obj_id_type(obj_id)
+    #z = check_obj_id_type(obj_id)
     session = boto3.session.Session()
     s3 = session.client(
         service_name="s3", endpoint_url="https://storage.yandexcloud.net"
@@ -60,20 +60,27 @@ def get_audio_file(obj_id: int) -> str:
     s3.delete_object(
         Bucket=settings.YC_BUCKET_NAME,
         Key=file_name,
-    )'''
+    )
 
 
-'''def upload_file_to_bucket(obj_id: int) -> None:
+def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
-    check_obj_id_type(obj_id)
-    session = boto3.session.Session()
+    #check_obj_id_type(obj_id)
+    #aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
+    #aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+    session = boto3.session.Session(
+        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf" ,
+        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",
+        region_name="ru-central1",
+    )
     s3 = session.client(
-        service_name="s3", endpoint_url="https://storage.yandexcloud.net"
+        service_name="s3", 
+        endpoint_url="https://storage.yandexcloud.net"
     )
     file_name = get_audio_file(obj_id).split("/")[-1]
     s3.upload_file(
         f"{settings.MEDIA_ROOT}/{get_audio_file(obj_id)}",
-        settings.YC_BUCKET_NAME,
+        "sefer",
         file_name,
     )
 
@@ -84,8 +91,8 @@ def create_bucket_url(obj_id: int) -> str:
     file_name = get_audio_file(obj_id).split("/")[-1]
     return (
         "https://storage.yandexcloud.net/"
-        f"{settings.YC_BUCKET_NAME}/{file_name}"
-    )'''
+        f"sefer/{file_name}"
+    )
 
 
 def create_transcription(obj_id: int) -> list:
@@ -96,28 +103,28 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
-    #upload_file_to_bucket(obj_id)  # загрузка файла в бакет
-    file_url = get_audio_file(obj_id)
-    post_url = settings.TRANSCRIBE_API_URL
+    a = upload_file_to_bucket(obj_id)  # загрузка файла в бакет
+    file_url = create_bucket_url(obj_id)
+    post_url = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
     body = {
         "config": {
             "specification": {
                 "languageCode": "ru-RU",
-                "audioEncoding": "MP3",
+                "audioEncoding": "MP3"
             }
         },
         "audio": {"uri": file_url},
     }
-    header = {"Authorization": "Bearer {}".format(settings.YC_IAM_TOKEN)}
+    header = {"Authorization": 'Api-Key {}'.format("AQVNzQZst92-SQYgP5zowxzTa7L6GrG0FT3OXhtZ")}
     req = requests.post(post_url, headers=header, json=body)
-    if req.status_code != HTTPStatus.OK:
-        raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
+    #if req.status_code != HTTPStatus.OK:
+    #    raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
     data = req.json()
-
+    id = data['id']
     while True:
         time.sleep(1)
-        get_url = get_audio_file(obj_id)#"https://operation.api.cloud.yandex.net/operations/{id}"
-        req = requests.get(get_url, headers=header)
+        get_url = "https://operation.api.cloud.yandex.net/operations/{id}"
+        req = requests.get(get_url.format(id=data["id"]), headers=header)
         req = req.json()
         if req["done"]:
             break
