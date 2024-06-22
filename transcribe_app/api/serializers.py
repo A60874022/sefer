@@ -62,7 +62,7 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
 
 class TextBlockGetSerializer(serializers.ModelSerializer):
-    """Сериализатор текстового блока."""
+    """Сериализатор текстового блока при сохранении файла и ручной расшифровкой."""
    
 
     class Meta:
@@ -85,7 +85,7 @@ class Base64AudioField(serializers.FileField):
 
 
 class TranscriptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для загрузки аудио."""
+    """Сериализатор для загрузки аудио для автоматической расшифровки."""
 
     audio = Base64AudioField()
 
@@ -124,7 +124,8 @@ class TranscriptionShortSerializer(serializers.ModelSerializer):
 
 
 class TranscriptionBaseSerializer(serializers.ModelSerializer):
-    """Сериализатор для загрузки аудио."""
+    """Сериализатор для загрузки аудио и при сохранении файла
+      и ручной расшифровкой."""
 
     audio = Base64AudioField(required=False)
     text_blocks = TextBlockGetSerializer(
