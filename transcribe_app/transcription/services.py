@@ -4,7 +4,6 @@ import os
 import boto3
 import requests
 from django.conf import settings
-
 from .models import Transcription
 
 
@@ -66,11 +65,9 @@ def delete_file_in_backet(obj_id: int) -> None:
 def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
     #check_obj_id_type(obj_id)
-    #aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
-    #aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     session = boto3.session.Session(
-        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf" ,
-        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",
+        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf",#settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",#settings.AWS_SECRET_ACCESS_KEY,
         region_name="ru-central1",
     )
     s3 = session.client(
@@ -117,8 +114,8 @@ def create_transcription(obj_id: int) -> list:
     }
     header = {"Authorization": 'Api-Key {}'.format("AQVNzQZst92-SQYgP5zowxzTa7L6GrG0FT3OXhtZ")}
     req = requests.post(post_url, headers=header, json=body)
-    #if req.status_code != HTTPStatus.OK:
-    #    raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
+    if req.status_code != HTTPStatus.OK:
+        raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
     data = req.json()
     id = data['id']
     while True:

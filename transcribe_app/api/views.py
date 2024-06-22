@@ -3,7 +3,7 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer,
-                             TranscriptionFileSerializer, TranscriptionBaseSerializer)
+                            TranscriptionBaseSerializer)
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -12,7 +12,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import mixins
+from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_transcription,  
@@ -33,7 +36,6 @@ class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
 
-
 class CountryViewSet(ModelViewSet):
     serializer_class = CountrySerializer
     queryset = Country.objects.all()
@@ -44,10 +46,12 @@ class PersonalitiesViewSet(ModelViewSet):
     queryset = Personalities.objects.all()
 
 
-class TextBlockViewSet(ModelViewSet):
+class TextBlockViewSet(viewsets.ModelViewSet):
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
-
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ("transcription", "minute")
+    search_fields = ("transcription",) 
 
 class TranscriptionViewSet(ModelViewSet):
     """
@@ -121,10 +125,6 @@ class TranscriptionSaveViewSet(ModelViewSet):
     """
      
     queryset = Transcription.objects.all()
-    serializer_class = TranscriptionFileSerializer
+    serializer_class = TranscriptionBaseSerializer
 
-    def get_serializer_class(self):
-        """Функция выбора класса - сериализатора в зависимости от метода"""
-        if self.request.method == "GET":
-            return TranscriptionBaseSerializer
-        return TranscriptionFileSerializer
+  
