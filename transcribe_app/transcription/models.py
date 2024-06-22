@@ -7,9 +7,8 @@ from django.dispatch import receiver
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    audio_url = models.URLField("Backet_url_name", blank=True, max_length=500)
-    audio = models.FileField("Аудио", upload_to="transcription/audio")
-    name = models.CharField("Название", max_length=60)
+    audio = models.FileField("Аудио", upload_to="transcription/audio",  blank=True, null=True)
+    name = models.CharField("Название", max_length=60, blank=True)
     code = models.CharField(
         "Шифр", max_length=100, unique=True, null=True, blank=True
     )
@@ -21,7 +20,7 @@ class Transcription(models.Model):
             ('sent', 'Отправлено'),
             ('received', 'Готово')
         ],
-        default='not_sent'
+        default='not_sent',
     )
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
 
@@ -32,7 +31,9 @@ class Transcription(models.Model):
         verbose_name = "Транскрипция"
         verbose_name_plural = "Транскрипции"
 
-
+    def __nonzero__(self):
+        return bool(self. audio)
+    
 @receiver(models.signals.post_delete, sender=Transcription)
 def auto_delete_media_file(sender, instance, *args, **kwargs):
     if instance.audio:
@@ -135,7 +136,8 @@ class TextBlock(models.Model):
     minute = models.PositiveIntegerField("Минута")
     text = models.TextField("Текст")
     transcription = models.ForeignKey(
-        Transcription, on_delete=models.CASCADE, related_name="text_blocks"
+        Transcription, on_delete=models.CASCADE, related_name="text_blocks",
+        blank=True
     )
     keywords = models.ManyToManyField(
         Keywords, blank=True, verbose_name="Ключевые слова"

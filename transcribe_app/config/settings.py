@@ -1,21 +1,23 @@
 import os
 from distutils.util import strtobool
+from datetime import timedelta
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
+
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 path_to_env = os.path.join(BASE_DIR, "..", "infra", ".env")
 
-load_dotenv(path_to_env)
+load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", default=get_random_secret_key())
+SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 
-DEBUG = bool(strtobool(os.getenv("DEBUG", default="True")))
+DEBUG = bool(strtobool(os.environ.get("DEBUG", default="True")))
 
-ALLOWED_HOSTS = os.getenv("HOST", default="127.0.0.1,localhost").split(',')
+ALLOWED_HOSTS = os.environ.get("HOST", default="127.0.0.1,localhost").split(',')
 
 INSTALLED_APPS = (
     "django.contrib.admin",
@@ -25,7 +27,9 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    'django_filters',
     "djoser",
+    'rest_framework_simplejwt',
     "drf_yasg",
     "users.apps.UsersConfig",
     "transcription.apps.TranscriptionConfig",
@@ -72,14 +76,14 @@ USE_TZ = True
 
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv(
+        "ENGINE": os.environ.get(
             "DB_ENGINE", default="django.db.backends.postgresql"
         ),
-        "NAME": os.getenv("POSTGRES_DB", default="db.postgres"),
-        "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.getenv("DB_HOST", default="db"),
-        "PORT": os.getenv("DB_PORT", default="5432"),
+        "NAME": os.environ.get("POSTGRES_DB", default="postgres4"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("DB_HOST", default="localhost"),
+        "PORT": os.environ.get("DB_PORT", default="5432"),
         "TIME_ZONE": TIME_ZONE,
     }
 }
@@ -113,30 +117,42 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DJOSER = {
-    "TOKEN_MODEL": "users.models.CastomToken",
-}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "users.authentication.CastomTokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ),
+}
+
+SIMPLE_JWT = {
+    #'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
 SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Token": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
         }
-    }
+    },
 }
 
-YC_IAM_TOKEN = os.getenv("YC_IAM_TOKEN", default="you_iam_token")
-YC_BUCKET_NAME = os.getenv("YC_BUCKET_NAME", default="you_backet_name")
+YC_IAM_TOKEN = os.environ.get("YC_IAM_TOKEN", default="AQVNzQZst92-SQYgP5zowxzTa7L6GrG0FT3OXhtZ")
+YC_BUCKET_NAME = os.environ.get("YC_BUCKET_NAME", default="sefer")
 TRANSCRIBE_API_URL = ("https://transcribe.api.cloud.yandex.net"
                       "/speech/stt/v2/longRunningRecognize")
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", default="YCAJEM-ILuTzdEbu8c7Ozu3sf")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", default="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif")
