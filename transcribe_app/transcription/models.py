@@ -7,7 +7,6 @@ from django.dispatch import receiver
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    #audio_url = models.URLField("Backet_url_name", blank=True, max_length=500)
     audio = models.FileField("Аудио", upload_to="transcription/audio",  blank=True, null=True)
     name = models.CharField("Название", max_length=60, blank=True)
     code = models.CharField(
@@ -137,7 +136,8 @@ class TextBlock(models.Model):
     minute = models.PositiveIntegerField("Минута")
     text = models.TextField("Текст")
     transcription = models.ForeignKey(
-        Transcription, on_delete=models.CASCADE, related_name="text_blocks"
+        Transcription, on_delete=models.CASCADE, related_name="text_blocks",
+        blank=True
     )
     keywords = models.ManyToManyField(
         Keywords, blank=True, verbose_name="Ключевые слова"

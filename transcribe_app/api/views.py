@@ -3,7 +3,7 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer,
-                             TranscriptionFileSerializer)
+                            TranscriptionBaseSerializer)
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -12,10 +12,16 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import mixins
+from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
-from transcription.services import create_transcription,  get_audio_file   
+from transcription.services import (create_transcription,  
+                                    get_audio_file,
+                                    create_bucket_url,
+                                    delete_file_in_backet)   
                                     
 
 from .yasg import glossary_schema_dict
@@ -30,7 +36,6 @@ class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
 
-
 class CountryViewSet(ModelViewSet):
     serializer_class = CountrySerializer
     queryset = Country.objects.all()
@@ -41,10 +46,12 @@ class PersonalitiesViewSet(ModelViewSet):
     queryset = Personalities.objects.all()
 
 
-class TextBlockViewSet(ModelViewSet):
+class TextBlockViewSet(viewsets.ModelViewSet):
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
-
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ("transcription", "minute")
+    search_fields = ("transcription",) 
 
 class TranscriptionViewSet(ModelViewSet):
     """
@@ -55,12 +62,14 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
+    
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        #delete_file_in_backet(obj_id=instance.id)
+        delete_file_in_backet(obj_id=instance.id)
         return super().destroy(request, *args, **kwargs)
 
+    
     @action(
         detail=False,
         methods=["retrieve"],
@@ -69,7 +78,7 @@ class TranscriptionViewSet(ModelViewSet):
     )
     def create_transcription(self, request, pk=None):
         transcription = get_object_or_404(Transcription, pk=pk)
-        #transcription.audio_url = create_bucket_url(pk)
+        transcription.audio_url = create_bucket_url(pk)
         transcription.audio =  get_audio_file(pk)
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
@@ -110,11 +119,12 @@ class TranscriptionShortList(ListAPIView):
     serializer_class = TranscriptionShortSerializer
 
 
-class TranscriptionSaveViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
-                          viewsets.GenericViewSet):
+class TranscriptionSaveViewSet(ModelViewSet):
     """
-    Предназначен для сохранения, удаления, обновления файлов.
+    Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
     """
      
     queryset = Transcription.objects.all()
-    serializer_class = TranscriptionFileSerializer
+    serializer_class = TranscriptionBaseSerializer
+
+  

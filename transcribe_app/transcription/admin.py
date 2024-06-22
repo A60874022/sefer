@@ -15,22 +15,15 @@ class TextBlockInline(admin.StackedInline):
 @admin.register(Transcription)
 class TranscriptionAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'code', 'name', 'display_audio_link',
+        'id', 'code', 'name',
         'transcription_status', 'last_updated', 'audio_duration'
     )
     list_filter = ('transcription_status', 'last_updated')
     search_fields = ('name', 'code')
     inlines = [TextBlockInline]
-    readonly_fields = ('id', 'last_updated', 'display_audio_link')
+    readonly_fields = ('id', 'last_updated')
 
-    def display_audio_link(self, obj):
-        """Проверяет наличие и возваращает URL аудиозаписи"""
-        if obj.audio_url:
-            return format_html(
-                "<a href='{}' target='_blank'>Слушать аудио</a>", obj.audio_url
-            )
-        return "Нет ссылки"
-    display_audio_link.short_description = "Аудио"
+   
 
     def audio_duration(self, obj):
         """
