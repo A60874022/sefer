@@ -26,8 +26,8 @@ urlpatterns = [
         TranscriptionViewSet.as_view({"get": "create_transcription"}),
     ),
     path('glossary/', GetGlossaryAPIView.as_view(), name='glossary'),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.authtoken")),
+    path('',include('djoser.urls')),
+    path('',include('djoser.urls.jwt')),
 ]
 
 urlpatterns += docs_url
