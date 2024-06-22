@@ -148,8 +148,8 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             TextBlock.objects.create(transcription=transcription,
                                                   **block_data)
         return transcription
-    
-    '''def update(self,  validated_data):
+
+    def update(self, instance, validated_data):
         """
         Обновление записи в том числе  и текстовых блоков.
         ВАЖНО: при обновлении и правке данных необходимо скопировать
@@ -161,16 +161,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             data_text_blocks = validated_data.pop("text_blocks")
             instance.text_blocks.all().delete()  # Удаляем старые text_blocks
             for block_data in data_text_blocks:
-                tag_fields = [
-                    field.name for field in TextBlock._meta.get_fields()
-                    if isinstance(field, ManyToManyField)
-                ]
-                tag_data = {field: block_data.pop(field)
-                            for field in tag_fields if field in block_data}
-                text_block = TextBlock.objects.create(transcription=instance,
+                TextBlock.objects.create(transcription=instance,
                                                       **block_data)
-                for tag, data in tag_data.items():
-                    text_block.__getattribute__(tag).set(data)
-
         instance.save()
-        return instance'''
+        return instance
