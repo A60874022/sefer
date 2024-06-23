@@ -83,7 +83,6 @@ class Base64AudioField(serializers.FileField):
 
         return super().to_internal_value(data)
 
-
 class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио для автоматической расшифровки."""
 
