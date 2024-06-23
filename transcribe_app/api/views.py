@@ -79,6 +79,7 @@ class TranscriptionViewSet(ModelViewSet):
     def create_transcription(self, request, pk=None):
         transcription = get_object_or_404(Transcription, pk=pk)
         transcription.audio_url = create_bucket_url(pk)
+        print(transcription.audio_url )
         transcription.audio =  get_audio_file(pk)
         text = create_transcription(pk)
         TextBlock.objects.bulk_create(
