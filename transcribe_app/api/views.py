@@ -45,7 +45,6 @@ class PersonalitiesViewSet(ModelViewSet):
     serializer_class = PersonalitiesSerializer
     queryset = Personalities.objects.all()
 
-
 class TextBlockViewSet(viewsets.ModelViewSet):
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
