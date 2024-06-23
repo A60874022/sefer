@@ -133,7 +133,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "text_blocks")
+        fields = ("id", "name", "audio", "text_blocks",)
 
 
     def create(self, validated_data):

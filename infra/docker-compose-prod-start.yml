@@ -1,4 +1,4 @@
-version: '3'
+ыырversion: '3'
 
 volumes:
   pg_data:
