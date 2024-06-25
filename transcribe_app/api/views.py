@@ -3,7 +3,8 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer,
-                            TranscriptionBaseSerializer)
+                             TranscriptionBaseSerializer, TranscriptionPartialSerializer)
+                             
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -15,7 +16,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-
+from django.http import QueryDict
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_transcription,  
@@ -95,6 +96,18 @@ class TranscriptionViewSet(ModelViewSet):
         transcription.save()
         serializer = self.get_serializer(transcription)
         return Response(serializer.data)
+    
+    
+    ''' @action(
+        detail=False,
+        methods=["post"],
+        url_name="transcription_partial",
+        url_path="transcription_partial",
+    )
+    def partial_transcription(self, request, *args, **kwargs):
+        partial = request.GET.get("partial"), 123456)
+        serializer = self.get_serializer("789")
+        return Response(serializer'''
 
 
 class GetGlossaryAPIView(APIView):
@@ -125,7 +138,44 @@ class TranscriptionSaveViewSet(ModelViewSet):
     Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
     """
      
-    queryset = Transcription.objects.all()
+    queryset = Transcription.objects.all() 
     serializer_class = TranscriptionBaseSerializer
 
-  
+class TranscriptionPartialViewSet(ModelViewSet):
+    """
+    Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
+    """
+     
+    queryset = Transcription.objects.all() 
+    serializer_class = TranscriptionPartialSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Создание транскрипции с текстовыми блоками через пост запрос.
+        Поля тегов добавляются отдельно после создания текстового блока.
+        """
+        #partial = request.GET.get("partial")
+        #transcription = Transcription.objects.create(**validated_data)
+        #print(request.GET.get("partial"), 124)
+        print(request.data)
+        name = request.data["name"]
+
+        audio = request.data["audio"]
+        
+        transcription=Transcription.objects.create(name=name, audio = audio)
+        partial = request.GET.get("partial")                                          
+        print(partial, 124)
+        last = Transcription.objects.filter(pk__gt=1).last()
+        text = create_transcription(last.id)
+        TextBlock.objects.bulk_create(
+            [
+                TextBlock(
+                    minute=minute,
+                    text=" ".join(chunk),
+                    transcription=transcription
+                )
+                for minute, chunk in enumerate(text, start=1) if str(minute) in partial
+            ]
+        )
+        transcription.save()
+      

@@ -3,7 +3,9 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (CityViewSet, CountryViewSet, GetGlossaryAPIView,
                     KeywordsViewSet, PersonalitiesViewSet, TextBlockViewSet,
-                    TranscriptionShortList, TranscriptionViewSet, TranscriptionSaveViewSet)
+                    TranscriptionShortList, TranscriptionViewSet, 
+                    TranscriptionSaveViewSet, TranscriptionPartialViewSet)
+                    
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
@@ -16,6 +18,7 @@ router.register(r"countries", CountryViewSet, basename="countries")
 router.register(r"textblock", TextBlockViewSet, basename="textblock")
 router.register(r"keywords", KeywordsViewSet, basename="keywords")
 router.register(r"transcriptions_save", TranscriptionSaveViewSet, basename="transcriptions_save")
+router.register(r"partial", TranscriptionPartialViewSet, basename="partial")
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -26,6 +29,7 @@ urlpatterns = [
         TranscriptionViewSet.as_view({"get": "create_transcription"}),
     ),
     path('glossary/', GetGlossaryAPIView.as_view(), name='glossary'),
+    
     path('',include('djoser.urls')),
     path('',include('djoser.urls.jwt')),
 ]

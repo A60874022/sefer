@@ -164,3 +164,44 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
                                                       **block_data)
         instance.save()
         return instance
+
+
+class TranscriptionPartialSerializer(serializers.ModelSerializer):
+    """Сериализатор для загрузки частичной автоматической расшифровки аудио."""
+
+    audio = Base64AudioField()
+
+    class Meta:
+        model = Transcription
+        fields = ("id", "name", "audio")
+
+
+    #@transaction.atomic
+    def create(self, instance, request, *args, **kwds):
+        """
+        Создание транскрипции с текстовыми блоками через пост запрос.
+        Поля тегов добавляются отдельно после создания текстового блока.
+        """
+        #partial = request.GET.get("partial")
+        #transcription = Transcription.objects.create(**validated_data)
+        print(instance, 124)
+        return instance
+        '''
+        last = Transcription.objects.filter(pk__gt=1).last()
+        text = create_transcription(last.id)
+        TextBlock.objects.bulk_create(
+            [
+                TextBlock(
+                    minute=minute,
+                    text=" ".join(chunk),
+                    transcription=transcription
+                )
+                for minute, chunk in enumerate(text, start=1)
+            ]
+        )
+        transcription.save()
+        
+        return validated_data'''
+
+    
+
