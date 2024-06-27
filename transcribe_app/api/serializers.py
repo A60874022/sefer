@@ -1,12 +1,13 @@
 import base64
-from django.db import transaction
+
 from django.core.files.base import ContentFile
-from django.db.models import ManyToManyField
-from rest_framework import serializers
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import create_transcription
+
 
 class KeywordsSerializer(serializers.ModelSerializer):
     """Сериализатор для ключевых слов."""
@@ -52,7 +53,7 @@ class PersonalitiesSerializer(serializers.ModelSerializer):
 
 class TextBlockSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока."""
-    
+
     class Meta:
         model = TextBlock
         fields = (
@@ -63,7 +64,6 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
 class TextBlockGetSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока при сохранении файла и ручной расшифровкой."""
-   
 
     class Meta:
         model = TextBlock
@@ -83,6 +83,7 @@ class Base64AudioField(serializers.FileField):
 
         return super().to_internal_value(data)
 
+
 class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио для автоматической расшифровки."""
 
@@ -91,6 +92,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transcription
         fields = ("id", "name", "audio")
+
     @transaction.atomic
     def create(self, validated_data):
         """
@@ -111,7 +113,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
             ]
         )
         transcription.save()
-        
+
         return validated_data
 
 
@@ -134,7 +136,6 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
         model = Transcription
         fields = ("id", "name", "audio", "text_blocks",)
 
-
     def create(self, validated_data):
         """
         Создание транскрипции с текстовыми блоками через пост запрос.
@@ -142,10 +143,9 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
         """
         data_text_blocks = validated_data.pop("text_blocks")
         transcription = Transcription.objects.create(**validated_data)
-        print(data_text_blocks )
         for block_data in data_text_blocks:
             TextBlock.objects.create(transcription=transcription,
-                                                  **block_data)
+                                     **block_data)
         return transcription
 
     def update(self, instance, validated_data):
@@ -161,7 +161,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             instance.text_blocks.all().delete()  # Удаляем старые text_blocks
             for block_data in data_text_blocks:
                 TextBlock.objects.create(transcription=instance,
-                                                      **block_data)
+                                         **block_data)
         instance.save()
         return instance
 
@@ -174,34 +174,3 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transcription
         fields = ("id", "name", "audio")
-
-
-    #@transaction.atomic
-    def create(self, instance, request, *args, **kwds):
-        """
-        Создание транскрипции с текстовыми блоками через пост запрос.
-        Поля тегов добавляются отдельно после создания текстового блока.
-        """
-        #partial = request.GET.get("partial")
-        #transcription = Transcription.objects.create(**validated_data)
-        print(instance, 124)
-        return instance
-        '''
-        last = Transcription.objects.filter(pk__gt=1).last()
-        text = create_transcription(last.id)
-        TextBlock.objects.bulk_create(
-            [
-                TextBlock(
-                    minute=minute,
-                    text=" ".join(chunk),
-                    transcription=transcription
-                )
-                for minute, chunk in enumerate(text, start=1)
-            ]
-        )
-        transcription.save()
-        
-        return validated_data'''
-
-    
-
