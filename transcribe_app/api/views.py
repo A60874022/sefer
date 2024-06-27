@@ -80,9 +80,7 @@ class TranscriptionViewSet(ModelViewSet):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute,
-                    text=" ".join(chunk),
-                    transcription=transcription
+                    minute=minute, text=" ".join(chunk), transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]
@@ -96,16 +94,18 @@ class GetGlossaryAPIView(APIView):
     """
     Получение списка тэгов.
     """
+
     @swagger_auto_schema(responses=glossary_schema_dict)
     def get(self, request):
         glossary_data = {
-            'keywords': KeywordsSerializer(
-                Keywords.objects.all(), many=True).data,
-            'countries': CountryGlossarySerializer(
-                Country.objects.all(), many=True).data,
-            'cities': CitySerializer(
-                City.objects.all(), many=True).data,
-            'personalities': PersonalitiesSerializer(Personalities.objects.all(), many=True).data
+            "keywords": KeywordsSerializer(Keywords.objects.all(), many=True).data,
+            "countries": CountryGlossarySerializer(
+                Country.objects.all(), many=True
+            ).data,
+            "cities": CitySerializer(City.objects.all(), many=True).data,
+            "personalities": PersonalitiesSerializer(
+                Personalities.objects.all(), many=True
+            ).data,
         }
         return Response(glossary_data)
 
@@ -143,21 +143,20 @@ class TranscriptionPartialViewSet(ModelViewSet):
             partial = request.GET.get("partial")
             audio = request.data["audio"]
         except:
-            AssertionError('Ошибка при получении API')
+            AssertionError("Ошибка при получении API")
         if partial:
             transcription = Transcription.objects.create(name=name, audio=audio)
         else:
-            raise ValueError('Partial не должен быть пустым.')
+            raise ValueError("Partial не должен быть пустым.")
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute,
-                    text=" ".join(chunk),
-                    transcription=transcription
+                    minute=minute, text=" ".join(chunk), transcription=transcription
                 )
-                for minute, chunk in enumerate(text, start=1) if str(minute) in partial
+                for minute, chunk in enumerate(text, start=1)
+                if str(minute) in partial
             ]
         )
         transcription.save()

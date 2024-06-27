@@ -14,7 +14,10 @@ class KeywordsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Keywords
-        fields = ("id", "name",)
+        fields = (
+            "id",
+            "name",
+        )
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -48,7 +51,10 @@ class PersonalitiesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personalities
-        fields = ("id", "name",)
+        fields = (
+            "id",
+            "name",
+        )
 
 
 class TextBlockSerializer(serializers.ModelSerializer):
@@ -57,8 +63,14 @@ class TextBlockSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextBlock
         fields = (
-            "id", "minute", "text", "transcription",
-            "keywords", "personalities", "cities", "countries"
+            "id",
+            "minute",
+            "text",
+            "transcription",
+            "keywords",
+            "personalities",
+            "cities",
+            "countries",
         )
 
 
@@ -67,9 +79,7 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextBlock
-        fields = (
-            "id", "minute", "text"
-        )
+        fields = ("id", "minute", "text")
 
 
 class Base64AudioField(serializers.FileField):
@@ -105,9 +115,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute,
-                    text=" ".join(chunk),
-                    transcription=transcription
+                    minute=minute, text=" ".join(chunk), transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]
@@ -119,6 +127,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
 class TranscriptionShortSerializer(serializers.ModelSerializer):
     """Сериализатор для простого списка аудио."""
+
     class Meta:
         model = Transcription
         fields = ("id", "name")
@@ -126,15 +135,19 @@ class TranscriptionShortSerializer(serializers.ModelSerializer):
 
 class TranscriptionBaseSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио и при сохранении файла
-      и ручной расшифровкой."""
+    и ручной расшифровкой."""
 
     audio = Base64AudioField(required=False)
-    text_blocks = TextBlockGetSerializer(
-        many=True)
+    text_blocks = TextBlockGetSerializer(many=True)
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "text_blocks",)
+        fields = (
+            "id",
+            "name",
+            "audio",
+            "text_blocks",
+        )
 
     def create(self, validated_data):
         """
@@ -144,8 +157,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
         data_text_blocks = validated_data.pop("text_blocks")
         transcription = Transcription.objects.create(**validated_data)
         for block_data in data_text_blocks:
-            TextBlock.objects.create(transcription=transcription,
-                                     **block_data)
+            TextBlock.objects.create(transcription=transcription, **block_data)
         return transcription
 
     def update(self, instance, validated_data):
@@ -160,8 +172,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             data_text_blocks = validated_data.pop("text_blocks")
             instance.text_blocks.all().delete()  # Удаляем старые text_blocks
             for block_data in data_text_blocks:
-                TextBlock.objects.create(transcription=instance,
-                                         **block_data)
+                TextBlock.objects.create(transcription=instance, **block_data)
         instance.save()
         return instance
 
