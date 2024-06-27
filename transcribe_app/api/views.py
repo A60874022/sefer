@@ -126,7 +126,7 @@ class TranscriptionSaveViewSet(ModelViewSet):
 
 class TranscriptionPartialViewSet(ModelViewSet):
     """
-    Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
+    Предназначен для частичной автоматической расшифровки аудио.
     """
 
     queryset = Transcription.objects.all()
