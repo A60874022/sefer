@@ -7,20 +7,20 @@ from django.dispatch import receiver
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    audio = models.FileField("Аудио", upload_to="transcription/audio",  blank=True, null=True)
-    name = models.CharField("Название", max_length=60, blank=True)
-    code = models.CharField(
-        "Шифр", max_length=100, unique=True, null=True, blank=True
+    audio = models.FileField(
+        "Аудио", upload_to="transcription/audio", blank=True, null=True
     )
+    name = models.CharField("Название", max_length=60, blank=True)
+    code = models.CharField("Шифр", max_length=100, unique=True, null=True, blank=True)
     transcription_status = models.CharField(
         "Статус расшифровки",
         max_length=20,
         choices=[
-            ('not_sent', 'Не отправлено'),
-            ('sent', 'Отправлено'),
-            ('received', 'Готово')
+            ("not_sent", "Не отправлено"),
+            ("sent", "Отправлено"),
+            ("received", "Готово"),
         ],
-        default='not_sent',
+        default="not_sent",
     )
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
 
@@ -32,8 +32,9 @@ class Transcription(models.Model):
         verbose_name_plural = "Транскрипции"
 
     def __nonzero__(self):
-        return bool(self. audio)
-    
+        return bool(self.audio)
+
+
 @receiver(models.signals.post_delete, sender=Transcription)
 def auto_delete_media_file(sender, instance, *args, **kwargs):
     if instance.audio:
@@ -48,9 +49,10 @@ class Country(models.Model):
     is_admin = models.BooleanField(default=False)
     confirmed = models.BooleanField("Подтверждено?", default=True)
     category = models.CharField(
-        "Категория", max_length=50,
-        choices=[('modern', 'Современное'), ('historical', 'Историческое')],
-        default='modern'
+        "Категория",
+        max_length=50,
+        choices=[("modern", "Современное"), ("historical", "Историческое")],
+        default="modern",
     )
 
     def __str__(self):
@@ -72,7 +74,7 @@ class City(models.Model):
         verbose_name="Страна",
         blank=True,
         null=True,
-        related_name="cities"
+        related_name="cities",
     )
     confirmed = models.BooleanField("Подтверждено?", default=True)
 
@@ -106,12 +108,9 @@ class Personalities(models.Model):
 class Keywords(models.Model):
     """Модель, представляющая ключевые слова."""
 
-    name = models.CharField(
-        "Ключевое слово (рус.)", max_length=100, unique=True
-    )
+    name = models.CharField("Ключевое слово (рус.)", max_length=100, unique=True)
     name_en = models.CharField(
-        "Ключевое слово (англ.)", max_length=100, unique=True,
-        null=True, blank=True
+        "Ключевое слово (англ.)", max_length=100, unique=True, null=True, blank=True
     )
     parent = models.ForeignKey(
         "Keywords",
@@ -136,8 +135,7 @@ class TextBlock(models.Model):
     minute = models.PositiveIntegerField("Минута")
     text = models.TextField("Текст")
     transcription = models.ForeignKey(
-        Transcription, on_delete=models.CASCADE, related_name="text_blocks",
-        blank=True
+        Transcription, on_delete=models.CASCADE, related_name="text_blocks", blank=True
     )
     keywords = models.ManyToManyField(
         Keywords, blank=True, verbose_name="Ключевые слова"
@@ -145,12 +143,8 @@ class TextBlock(models.Model):
     personalities = models.ManyToManyField(
         Personalities, blank=True, verbose_name="Персоналии"
     )
-    cities = models.ManyToManyField(
-        City, blank=True, verbose_name="Города"
-    )
-    countries = models.ManyToManyField(
-        Country, blank=True, verbose_name="Страны"
-    )
+    cities = models.ManyToManyField(City, blank=True, verbose_name="Города")
+    countries = models.ManyToManyField(Country, blank=True, verbose_name="Страны")
 
     class Meta:
         verbose_name = "Текстовый_блок"
