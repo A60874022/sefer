@@ -15,15 +15,14 @@ class TextBlockInline(admin.StackedInline):
 @admin.register(Transcription)
 class TranscriptionAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'code', 'name',
-        'transcription_status', 'last_updated', 'audio_duration'
+        'id', 'name', 'audio', "audio_duration", 'code',
+        'transcription_status', 'last_updated', 'creator'
     )
-    list_filter = ('transcription_status', 'last_updated')
-    search_fields = ('name', 'code')
+    search_fields = ('id', 'name')
+    list_filter = ('transcription_status',)
+    ordering = ('id', 'name', 'audio', 'last_updated')
     inlines = [TextBlockInline]
     readonly_fields = ('id', 'last_updated')
-
-   
 
     def audio_duration(self, obj):
         """
@@ -49,19 +48,29 @@ class TranscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(City)
 class CityAdmin(ModelAdmin):
-    list_display = ("name", "country", "is_admin", "confirmed")
-    list_filter = ("country", "is_admin", "confirmed")
-    search_fields = ("name",)
+    list_display = ("id", "name", "country", "last_updated", "confirmed", 'creator')
+    search_fields = ('id', "name", "confirmed")
+    list_filter = ("country__cities", "confirmed")
 
-    def make_confirmed(self, request, queryset):
+    readonly_fields = ('id', 'last_updated')
+    ordering = ('id', 'name', 'last_updated', "confirmed")
+
+    '''def make_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
 
-    make_confirmed.short_description = "Отметьте выбранные места как подтвержденные"  # noqa
+    make_confirmed.short_description = "Отметьте выбранные места как подтвержденные"  # noqa'''
+
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            # Только при создании нового объекта
+            obj.creator = request.user
+        obj.last_updated = now()
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Personalities)
 class PersonalitiesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'name_en', 'is_confirmed', 'last_updated')
+    list_display = ('id', 'name', 'name_en', 'is_confirmed', 'last_updated', 'creator')
     list_filter = ('is_confirmed',)
     search_fields = ('id', 'name', 'name_en')
     list_display_links = ('id', 'name', 'name_en')
@@ -79,15 +88,10 @@ class PersonalitiesAdmin(admin.ModelAdmin):
         }),
     )
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:  # Сделать поля нередактируемыми, если объект уже существует
-            return self.readonly_fields + ('name', 'name_en')
-        return self.readonly_fields
-
     def save_model(self, request, obj, form, change):
         if not obj.pk:
             # Только при создании нового объекта
-            obj.created_by = request.user
+            obj.creator = request.user
         obj.last_updated = now()
         super().save_model(request, obj, form, change)
 
@@ -95,10 +99,10 @@ class PersonalitiesAdmin(admin.ModelAdmin):
 @admin.register(Keywords)
 class KeywordsAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'name_en', 'parent', 'last_updated')
-    list_filter = ('parent',)
-    search_fields = ('name', 'name_en')
+    list_filter = ('name', 'name_en', 'last_updated',)
+    search_fields = ("id", 'name', 'name_en', 'parent')
     readonly_fields = ('id', 'last_updated')
-
+    ordering = ('id', 'name', 'name_en', 'last_updated')
     fieldsets = (
         (None, {
             'fields': ('name', 'name_en', 'parent')
@@ -112,9 +116,10 @@ class KeywordsAdmin(admin.ModelAdmin):
 
 @admin.register(Country)
 class CountryAdmin(ModelAdmin):
-    list_display = ("name", "is_admin", "confirmed", "category")
-    list_filter = ("is_admin", "confirmed", "category")
-    search_fields = ("name",)
+    list_display = ("id", "name", "name_en", "category", "last_updated", "confirmed", )
+    list_filter = ("category", "confirmed")
+    ordering = ('id', 'name', 'name_en', "confirmed")
+    search_fields = ("id", "name", "name_en", "category", "confirmed")
 
     def make_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
@@ -123,5 +128,5 @@ class CountryAdmin(ModelAdmin):
     )
 
     fieldsets = (
-        (None, {"fields": ("name", "is_admin", "confirmed", "category")}),
+        (None, {"fields": ("name", "name_en", "confirmed", "category")}),
     )
