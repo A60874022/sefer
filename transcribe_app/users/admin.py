@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
@@ -8,30 +9,11 @@ admin.site.unregister(Group)
 
 
 @admin.register(User)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "username", "email", "is_active", "last_login", "is_staff")
-    list_filter = ("is_active", "is_staff", "groups")
-    search_fields = ("id", "username", "email")
-    ordering = ("id", "username", "last_login")
-    readonly_fields = ("last_login", "date_joined")
+class CustomUserAdmin(DefaultUserAdmin):
+    list_display = (
+        'id', 'username', 'email', 'password', 'is_staff', 'last_login', 'is_active',)
+    search_fields = ('id', 'username', 'email', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active',)
 
-    fieldsets = (
-        (None, {"fields": ("username", "password")}),
-        (
-            _("Личная информация"),
-            {"fields": ("first_name", "last_name", "email")},
-        ),  # noqa
-        (
-            _("Разрешения"),
-            {
-                "fields": (
-                    "is_active",
-                    "is_staff",
-                    "is_superuser",
-                    "groups",
-                    "user_permissions",
-                ),
-            },
-        ),
-        (_("Важные даты"), {"fields": ("last_login", "date_joined")}),
-    )
+    ordering = ('id', 'username', 'email', 'is_active',)
+    readonly_fields = ('last_login', 'date_joined')

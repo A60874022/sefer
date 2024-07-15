@@ -2,13 +2,17 @@ import os
 
 from django.db import models
 from django.dispatch import receiver
+from users.models import User
 
 
 class Transcription(models.Model):
     """Класс транскрипции текста."""
 
-    audio = models.FileField(
-        "Аудио", upload_to="transcription/audio", blank=True, null=True
+    audio = models.FileField("Аудио", upload_to="transcription/audio", blank=True, null=True)
+    name = models.CharField("Название", max_length=60, blank=True)
+    code = models.CharField(
+        "Шифр", max_length=100, unique=True, null=True, blank=True, error_messages={"unique":
+                                                                                    "Запись с таким шифром уже существует"}
     )
     name = models.CharField("Название", max_length=60, blank=True)
     code = models.CharField("Шифр", max_length=100, unique=True, null=True, blank=True)
@@ -23,6 +27,8 @@ class Transcription(models.Model):
         default="not_sent",
     )
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
+    creator = models.ForeignKey(User, verbose_name="редактор",
+                                on_delete=models.CASCADE,)
 
     def __str__(self):
         return f"{self.name} ({self.code})"
@@ -45,29 +51,38 @@ def auto_delete_media_file(sender, instance, *args, **kwargs):
 class Country(models.Model):
     """Модель, представляющая Страны."""
 
-    name = models.CharField("Страна", max_length=100, unique=True)
-    is_admin = models.BooleanField(default=False)
-    confirmed = models.BooleanField("Подтверждено?", default=True)
+    name = models.CharField("Страна", max_length=100, unique=True, error_messages={"unique":
+                                                                                   "Страна с таким названием уже существует"})
+    name_en = models.CharField(
+        "Имя (англ.)", max_length=100, unique=True, null=True, blank=True, error_messages={"unique":
+                                                                                           "Страна с таким названием уже существует"})
     category = models.CharField(
         "Категория",
         max_length=50,
         choices=[("modern", "Современное"), ("historical", "Историческое")],
         default="modern",
     )
+    confirmed = models.CharField("Подтверждено", choices=[
+        ('Подтверждено', 'Да'),
+        ('Не подтверждено', 'Нет'),
+    ],)
+    last_updated = models.DateTimeField("Обновлено", auto_now=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Страна"
+        verbose_name = "Страну"
         verbose_name_plural = "Страны"
 
 
 class City(models.Model):
     """Модель, представляющая Места."""
 
-    name = models.CharField("Место", max_length=100, unique=True)
-    is_admin = models.BooleanField(default=False)
+    name = models.CharField("Место", max_length=100, unique=True,
+                            error_messages={"unique":
+                                            "Место с таким названием уже существует"})
+
     country = models.ForeignKey(
         Country,
         on_delete=models.DO_NOTHING,
@@ -76,7 +91,13 @@ class City(models.Model):
         null=True,
         related_name="cities",
     )
-    confirmed = models.BooleanField("Подтверждено?", default=True)
+    last_updated = models.DateTimeField("Обновлено", auto_now=True)
+    confirmed = models.CharField("Подтверждено", choices=[
+        ('Подтверждено', 'Да'),
+        ('Не подтверждено', 'Нет'),
+    ],)
+    creator = models.ForeignKey(User, verbose_name="редактор",
+                                on_delete=models.CASCADE,)
 
     def __str__(self):
         return self.name
@@ -95,23 +116,34 @@ class Personalities(models.Model):
     )
     is_admin = models.BooleanField(default=False)
     last_updated = models.DateTimeField("Обновлено", auto_now=True)
-    is_confirmed = models.BooleanField("Подтверждено", default=True)
+
+    is_confirmed = models.CharField("Подтверждено", choices=[
+        ('Подтверждено', 'Да'),
+        ('Не подтверждено', 'Нет'),
+    ],)
+    creator = models.ForeignKey(User, verbose_name="редактор",
+                                on_delete=models.CASCADE,)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Персоналия"
+        verbose_name = "Персоналию"
         verbose_name_plural = "Персоналии"
 
 
 class Keywords(models.Model):
     """Модель, представляющая ключевые слова."""
 
-    name = models.CharField("Ключевое слово (рус.)", max_length=100, unique=True)
+    name = models.CharField(
+        "Ключевое слово (рус.)", max_length=100, unique=True,
+        error_messages={
+            "unique": "Ключевое слово с таким названием уже существует"})
+
     name_en = models.CharField(
-        "Ключевое слово (англ.)", max_length=100, unique=True, null=True, blank=True
-    )
+        "Ключевое слово (англ.)", max_length=100, unique=True,
+        null=True, blank=True, error_messages={
+            "unique": "Ключевое слово с таким названием уже существует"})
     parent = models.ForeignKey(
         "Keywords",
         on_delete=models.CASCADE,
