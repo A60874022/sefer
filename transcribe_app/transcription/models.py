@@ -14,15 +14,17 @@ class Transcription(models.Model):
         "Шифр", max_length=100, unique=True, null=True, blank=True, error_messages={"unique":
                                                                                     "Запись с таким шифром уже существует"}
     )
+    name = models.CharField("Название", max_length=60, blank=True)
+    code = models.CharField("Шифр", max_length=100, unique=True, null=True, blank=True)
     transcription_status = models.CharField(
         "Статус расшифровки",
         max_length=20,
         choices=[
-            ('not_sent', 'Не отправлено'),
-            ('sent', 'Отправлено'),
-            ('received', 'Готово')
+            ("not_sent", "Не отправлено"),
+            ("sent", "Отправлено"),
+            ("received", "Готово"),
         ],
-        default='not_sent',
+        default="not_sent",
     )
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
     creator = models.ForeignKey(User, verbose_name="редактор",
@@ -55,9 +57,10 @@ class Country(models.Model):
         "Имя (англ.)", max_length=100, unique=True, null=True, blank=True, error_messages={"unique":
                                                                                            "Страна с таким названием уже существует"})
     category = models.CharField(
-        "Категория", max_length=50,
-        choices=[('modern', 'Современное'), ('historical', 'Историческое')],
-        default='modern'
+        "Категория",
+        max_length=50,
+        choices=[("modern", "Современное"), ("historical", "Историческое")],
+        default="modern",
     )
     confirmed = models.CharField("Подтверждено", choices=[
         ('Подтверждено', 'Да'),
@@ -86,7 +89,7 @@ class City(models.Model):
         verbose_name="Страна",
         blank=True,
         null=True,
-        related_name="cities"
+        related_name="cities",
     )
     last_updated = models.DateTimeField("Обновлено", auto_now=True)
     confirmed = models.CharField("Подтверждено", choices=[
@@ -164,8 +167,7 @@ class TextBlock(models.Model):
     minute = models.PositiveIntegerField("Минута")
     text = models.TextField("Текст")
     transcription = models.ForeignKey(
-        Transcription, on_delete=models.CASCADE, related_name="text_blocks",
-        blank=True
+        Transcription, on_delete=models.CASCADE, related_name="text_blocks", blank=True
     )
     keywords = models.ManyToManyField(
         Keywords, blank=True, verbose_name="Ключевые слова"
@@ -173,12 +175,8 @@ class TextBlock(models.Model):
     personalities = models.ManyToManyField(
         Personalities, blank=True, verbose_name="Персоналии"
     )
-    cities = models.ManyToManyField(
-        City, blank=True, verbose_name="Города"
-    )
-    countries = models.ManyToManyField(
-        Country, blank=True, verbose_name="Страны"
-    )
+    cities = models.ManyToManyField(City, blank=True, verbose_name="Города")
+    countries = models.ManyToManyField(Country, blank=True, verbose_name="Страны")
 
     class Meta:
         verbose_name = "Текстовый_блок"

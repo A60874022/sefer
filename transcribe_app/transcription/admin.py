@@ -36,7 +36,7 @@ class TranscriptionAdmin(admin.ModelAdmin):
         в зависимости от условий или пользователя
         """
         if obj:
-            return self.readonly_fields + ('code',)
+            return self.readonly_fields + ("code",)
         return self.readonly_fields
 
     def save_model(self, request, obj, form, change):
@@ -79,13 +79,14 @@ class PersonalitiesAdmin(admin.ModelAdmin):
     ordering = ('id', 'name', 'name_en', 'last_updated')
 
     fieldsets = (
-        (None, {
-            'fields': ('name', 'name_en', 'is_confirmed')
-        }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': ('last_updated',),
-        }),
+        (None, {"fields": ("name", "name_en", "is_confirmed")}),
+        (
+            "Advanced options",
+            {
+                "classes": ("collapse",),
+                "fields": ("last_updated",),
+            },
+        ),
     )
 
     def save_model(self, request, obj, form, change):
@@ -104,13 +105,14 @@ class KeywordsAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'last_updated')
     ordering = ('id', 'name', 'name_en', 'last_updated')
     fieldsets = (
-        (None, {
-            'fields': ('name', 'name_en', 'parent')
-        }),
-        ('Дополнительная информация', {
-            'fields': ('last_updated',),
-            'classes': ('collapse',),
-        }),
+        (None, {"fields": ("name", "name_en", "parent")}),
+        (
+            "Дополнительная информация",
+            {
+                "fields": ("last_updated",),
+                "classes": ("collapse",),
+            },
+        ),
     )
 
 
@@ -123,9 +125,6 @@ class CountryAdmin(ModelAdmin):
 
     def make_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
-    make_confirmed.short_description = (
-        "Отметьте выбранные страны как подтвержденные"
-    )
 
     fieldsets = (
         (None, {"fields": ("name", "name_en", "confirmed", "category")}),
