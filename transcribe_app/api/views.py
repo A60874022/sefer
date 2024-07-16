@@ -7,6 +7,7 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              TranscriptionShortSerializer)
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import filters, viewsets
@@ -56,6 +57,7 @@ class TranscriptionViewSet(ModelViewSet):
     Вьюсет Транскрипции.
     Поддерживаемые методы по умолчанию `create()`, `retrieve()`, `update()`,
     `partial_update()`, `destroy()` and `list()` actions.
+    Предназначен для автоматической расшифровки.
     """
 
     serializer_class = TranscriptionSerializer
@@ -145,6 +147,9 @@ class TranscriptionPartialViewSet(ModelViewSet):
         except:
             AssertionError("Ошибка при получении API")
         if partial:
+            transcription_date = timezone.now()
+            transcription_status = "Готово"
+            print(transcription_date, transcription_status)
             transcription = Transcription.objects.create(name=name, audio=audio)
         else:
             raise ValueError("Partial не должен быть пустым.")
