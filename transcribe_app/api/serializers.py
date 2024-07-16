@@ -2,6 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from transcription.models import (City, Country, Keywords, Personalities,
@@ -43,7 +44,7 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ("id", "name")
+        fields = ("id", "name", "creator")
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
@@ -101,7 +102,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio")
+        fields = ("id", "name", "audio", "creator")
 
     @transaction.atomic
     def create(self, validated_data):
@@ -110,6 +111,9 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         Поля тегов добавляются отдельно после создания текстового блока.
         """
         transcription = Transcription.objects.create(**validated_data)
+        transcription_date = timezone.now()
+        transcription_status = "Готово"
+        print(transcription_date, transcription_status)
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
@@ -147,6 +151,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "text_blocks",
+            "creator"
         )
 
     def create(self, validated_data):
@@ -184,4 +189,5 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio")
+        fields = ("id", "name", "audio",
+                  "creator")

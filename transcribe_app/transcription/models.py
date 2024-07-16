@@ -14,8 +14,6 @@ class Transcription(models.Model):
         "Шифр", max_length=100, unique=True, null=True, blank=True, error_messages={"unique":
                                                                                     "Запись с таким шифром уже существует"}
     )
-    name = models.CharField("Название", max_length=60, blank=True)
-    code = models.CharField("Шифр", max_length=100, unique=True, null=True, blank=True)
     transcription_status = models.CharField(
         "Статус расшифровки",
         max_length=20,
@@ -32,6 +30,9 @@ class Transcription(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.code})"
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
     class Meta:
         verbose_name = "Транскрипция"
