@@ -14,6 +14,5 @@ class CustomUserAdmin(DefaultUserAdmin):
         'id', 'username', 'email', 'password', 'is_staff', 'last_login', 'is_active',)
     search_fields = ('id', 'username', 'email', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active',)
-
     ordering = ('id', 'username', 'email', 'is_active',)
     readonly_fields = ('last_login', 'date_joined')
