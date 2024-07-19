@@ -24,15 +24,13 @@ class Transcription(models.Model):
         ],
         default="not_sent",
     )
+    transcription_date = models.DateTimeField("Дата и время расшифровки")
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
     creator = models.ForeignKey(User, verbose_name="редактор",
                                 on_delete=models.CASCADE,)
 
     def __str__(self):
         return f"{self.name} ({self.code})"
-
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
 
     class Meta:
         verbose_name = "Транскрипция"
