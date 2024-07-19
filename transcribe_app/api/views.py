@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import filters, viewsets
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -19,7 +19,9 @@ from rest_framework.viewsets import ModelViewSet
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_bucket_url, create_transcription,
-                                    delete_file_in_backet, get_audio_file)
+                                    delete_file_in_backet, get_audio_file,
+                                    post_table_transcription)
+from users.models import User
 
 from .yasg import glossary_schema_dict
 
@@ -62,6 +64,11 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
+
+    def perform_create(self, serializer):
+        request_user = self.request.user
+        creator = User.objects.filter(username=request_user).first()
+        serializer.save(creator_id=creator.id)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -134,25 +141,18 @@ class TranscriptionPartialViewSet(ModelViewSet):
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(creator_id=self.request.user)
+        print(self.request.user)
+
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         """
         Создание транскрипции с текстовыми блоками через пост запрос.
         Поля тегов добавляются отдельно после создания текстового блока.
         """
-        try:
-            name = request.data["name"]
-            partial = request.GET.get("partial")
-            audio = request.data["audio"]
-        except:
-            AssertionError("Ошибка при получении API")
-        if partial:
-            transcription_date = timezone.now()
-            transcription_status = "Готово"
-            print(transcription_date, transcription_status)
-            transcription = Transcription.objects.create(name=name, audio=audio)
-        else:
-            raise ValueError("Partial не должен быть пустым.")
+        transcription = post_table_transcription(request, *args, **kwargs)
+        partial = request.GET.get("partial")
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
@@ -166,4 +166,5 @@ class TranscriptionPartialViewSet(ModelViewSet):
         )
         transcription.save()
         serializer = self.get_serializer(transcription)
+        # delete_file_in_backet(last.id)
         return Response(serializer.data)

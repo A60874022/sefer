@@ -16,8 +16,7 @@ class TextBlockInline(admin.StackedInline):
 class TranscriptionAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'name', 'audio', "audio_duration", 'code',
-        'transcription_status', 'last_updated', 'creator'
-    )
+        'transcription_status', "transcription_date", 'last_updated', "creator")
     search_fields = ('id', 'name')
     list_filter = ('transcription_status',)
     ordering = ('id', 'name', 'audio', 'last_updated')

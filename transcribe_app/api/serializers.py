@@ -26,7 +26,7 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ("id", "name", "country")
+        fields = ("id", "name", "country",)
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ("id", "name", "cities")
+        fields = ("id", "name", "cities",)
 
 
 class CountryGlossarySerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ("id", "name", "creator")
+        fields = ("id", "name", "creator",)
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
@@ -80,7 +80,7 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextBlock
-        fields = ("id", "minute", "text")
+        fields = ("id", "minute", "text",)
 
 
 class Base64AudioField(serializers.FileField):
@@ -102,7 +102,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "creator")
+        fields = ("id", "name", "audio", "transcription_status",)
 
     @transaction.atomic
     def create(self, validated_data):
@@ -110,10 +110,9 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         Создание транскрипции с текстовыми блоками через пост запрос.
         Поля тегов добавляются отдельно после создания текстового блока.
         """
-        transcription = Transcription.objects.create(**validated_data)
         transcription_date = timezone.now()
-        transcription_status = "Готово"
-        print(transcription_date, transcription_status)
+        transcription = Transcription.objects.create(**validated_data,
+                                                     transcription_date=transcription_date)
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
@@ -134,7 +133,7 @@ class TranscriptionShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name")
+        fields = ("id", "name",)
 
 
 class TranscriptionBaseSerializer(serializers.ModelSerializer):
@@ -151,7 +150,7 @@ class TranscriptionBaseSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "text_blocks",
-            "creator"
+            "transcription_status",
         )
 
     def create(self, validated_data):
@@ -189,5 +188,4 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio",
-                  "creator")
+        fields = ("id", "name", "audio", "transcription_status",)

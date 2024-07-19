@@ -5,6 +5,8 @@ from http import HTTPStatus
 import boto3
 import requests
 from django.conf import settings
+from django.utils import timezone
+from users.models import User
 
 from .models import Transcription
 
@@ -127,3 +129,23 @@ def create_transcription(obj_id: int) -> list:
         for word in chunk["alternatives"][0]["words"]:
             result_text.append((float(word["startTime"][:-1]), word["word"]))
     return create_text_blocks(result_text)
+
+
+def post_table_transcription(request, *args, **kwargs):
+    try:
+        name = request.data["name"]
+        partial = request.GET.get("partial")
+        audio = request.data["audio"]
+        request_user = request.user
+        creator = User.objects.filter(username=request_user).first()
+        transcription_status = request.data["transcription_status"]
+    except:
+        AssertionError("Ошибка при получении API")
+    if partial:
+        transcription_date = timezone.now()
+        transcription = Transcription.objects.create(creator_id=creator.id, name=name, audio=audio,
+                                                     transcription_date=transcription_date,
+                                                     transcription_status=transcription_status)
+        return transcription
+    else:
+        raise ValueError("Partial не должен быть пустым.")
