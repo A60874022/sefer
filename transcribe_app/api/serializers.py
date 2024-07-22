@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
-from transcription.services import create_transcription
+from transcription.services import create_transcription, delete_file_in_backet
 
 
 class KeywordsSerializer(serializers.ModelSerializer):
@@ -110,7 +110,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
             ]
         )
         transcription.save()
-
+        delete_file_in_backet(last.id)
         return validated_data
 
 
