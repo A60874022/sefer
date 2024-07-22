@@ -20,7 +20,7 @@ from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_bucket_url, create_transcription,
                                     delete_file_in_backet, get_audio_file,
-                                    post_table_transcription)
+                                    get_user, post_table_transcription)
 from users.models import User
 
 from .yasg import glossary_schema_dict
@@ -35,6 +35,9 @@ class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
 
+    def perform_create(self, serializer):
+        get_user(self, serializer)
+
 
 class CountryViewSet(ModelViewSet):
     serializer_class = CountrySerializer
@@ -44,6 +47,9 @@ class CountryViewSet(ModelViewSet):
 class PersonalitiesViewSet(ModelViewSet):
     serializer_class = PersonalitiesSerializer
     queryset = Personalities.objects.all()
+
+    def perform_create(self, serializer):
+        get_user(self, serializer)
 
 
 class TextBlockViewSet(viewsets.ModelViewSet):
@@ -66,9 +72,7 @@ class TranscriptionViewSet(ModelViewSet):
     queryset = Transcription.objects.all()
 
     def perform_create(self, serializer):
-        request_user = self.request.user
-        creator = User.objects.filter(username=request_user).first()
-        serializer.save(creator_id=creator.id)
+        get_user(self, serializer)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -142,8 +146,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
     serializer_class = TranscriptionPartialSerializer
 
     def perform_create(self, serializer):
-        serializer.save(creator_id=self.request.user)
-        print(self.request.user)
+        get_user(self, serializer)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
