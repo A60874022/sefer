@@ -169,5 +169,5 @@ class TranscriptionPartialViewSet(ModelViewSet):
         )
         transcription.save()
         serializer = self.get_serializer(transcription)
-        # delete_file_in_backet(last.id)
+        delete_file_in_backet(last.id)
         return Response(serializer.data)

@@ -54,21 +54,23 @@ def get_audio_file(obj_id: int) -> str:
 
 def delete_file_in_backet(obj_id: int) -> None:
     """Функция для удаления файла из бакета."""
-    # z = check_obj_id_type(obj_id)
-    session = boto3.session.Session()
+    session = boto3.session.Session(
+        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf",  # settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",  # settings.AWS_SECRET_ACCESS_KEY,
+        region_name="ru-central1",
+    )
     s3 = session.client(
         service_name="s3", endpoint_url="https://storage.yandexcloud.net"
     )
     file_name = get_audio_file(obj_id).split("/")[-1]
     s3.delete_object(
-        Bucket=settings.YC_BUCKET_NAME,
+        Bucket="sefer",
         Key=file_name,
     )
 
 
 def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
-    # check_obj_id_type(obj_id)
     session = boto3.session.Session(
         aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf",  # settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",  # settings.AWS_SECRET_ACCESS_KEY,
