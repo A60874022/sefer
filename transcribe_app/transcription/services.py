@@ -149,3 +149,9 @@ def post_table_transcription(request, *args, **kwargs):
         return transcription
     else:
         raise ValueError("Partial не должен быть пустым.")
+
+
+def get_user(self, serializer):
+    # request_user = self.request.user
+    # creator = User.objects.filter(username=request_user).first()
+    serializer.save(creator_id=1)
