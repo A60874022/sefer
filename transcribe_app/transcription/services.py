@@ -154,4 +154,4 @@ def post_table_transcription(request, *args, **kwargs):
 def get_user(self, serializer):
     request_user = self.request.user
     creator = User.objects.filter(username=request_user).first()
-    serializer.save(creator_id=1)
+    serializer.save(creator_id=creator.id)
