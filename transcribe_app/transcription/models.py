@@ -24,7 +24,7 @@ class Transcription(models.Model):
         ],
         default="not_sent",
     )
-    transcription_date = models.DateTimeField("Дата и время расшифровки")
+    transcription_date = models.DateTimeField("Дата и время расшифровки", null=True, blank=True)
     last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
     creator = models.ForeignKey(User, verbose_name="редактор",
                                 on_delete=models.CASCADE,)

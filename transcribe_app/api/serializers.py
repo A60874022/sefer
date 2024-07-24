@@ -122,50 +122,6 @@ class TranscriptionShortSerializer(serializers.ModelSerializer):
         fields = ("id", "name",)
 
 
-class TranscriptionBaseSerializer(serializers.ModelSerializer):
-    """Сериализатор для загрузки аудио и при сохранении файла
-    и ручной расшифровкой."""
-
-    text_blocks = TextBlockGetSerializer(many=True)
-
-    class Meta:
-        model = Transcription
-        fields = (
-            "id",
-            "name",
-            "audio",
-            "text_blocks",
-            "transcription_status",
-        )
-
-    def create(self, validated_data):
-        """
-        Создание транскрипции с текстовыми блоками через пост запрос.
-        Поля тегов добавляются отдельно после создания текстового блока.
-        """
-        data_text_blocks = validated_data.pop("text_blocks")
-        transcription = Transcription.objects.create(**validated_data)
-        for block_data in data_text_blocks:
-            TextBlock.objects.create(transcription=transcription, **block_data)
-        return transcription
-
-    def update(self, instance, validated_data):
-        """
-        Обновление записи в том числе  и текстовых блоков.
-        ВАЖНО: при обновлении и правке данных необходимо скопировать
-        все текстовые блоки в патч запрос и только после этого редактировать,
-        так как если будут переданы только старые данные то предыдущие
-        будут утеряны.
-        """
-        if "text_blocks" in validated_data:
-            data_text_blocks = validated_data.pop("text_blocks")
-            instance.text_blocks.all().delete()  # Удаляем старые text_blocks
-            for block_data in data_text_blocks:
-                TextBlock.objects.create(transcription=instance, **block_data)
-        instance.save()
-        return instance
-
-
 class TranscriptionPartialSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки частичной автоматической расшифровки аудио."""
 
