@@ -1,7 +1,6 @@
 from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              CountrySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionBaseSerializer,
                              TranscriptionPartialSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer)
@@ -134,7 +133,10 @@ class TranscriptionSaveViewSet(ModelViewSet):
     """
 
     queryset = Transcription.objects.all()
-    serializer_class = TranscriptionBaseSerializer
+    serializer_class = TranscriptionPartialSerializer
+
+    def perform_create(self, serializer):
+        get_user(self, serializer)
 
 
 class TranscriptionPartialViewSet(ModelViewSet):
