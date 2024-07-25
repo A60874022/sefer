@@ -54,7 +54,7 @@ class TextBlockViewSet(viewsets.ModelViewSet):
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ("transcription")
+    filterset_fields = ("transcription",)
     search_fields = ("transcription",)
 
 
