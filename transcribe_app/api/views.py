@@ -1,7 +1,6 @@
 from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              CountrySerializer, KeywordsSerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
-                             TranscriptionGetSerializer,
                              TranscriptionPartialSerializer,
                              TranscriptionSerializer,
                              TranscriptionShortSerializer)
@@ -69,12 +68,6 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
-
-    def get_serializer_class(self):
-        """Функция выбора класса - сериализатора в зависимости от метода"""
-        if self.request.method == "GET":
-            return TranscriptionGetSerializer
-        return TranscriptionSerializer
 
     def perform_create(self, serializer):
         get_user(self, serializer)
