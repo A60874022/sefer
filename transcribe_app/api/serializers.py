@@ -111,7 +111,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         )
         transcription.save()
         delete_file_in_backet(last.id)
-        return validated_data
+        return transcription
 
 
 class TranscriptionShortSerializer(serializers.ModelSerializer):
@@ -131,6 +131,7 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
 
 
 class TranscriptionGetSerializer(serializers.ModelSerializer):
+    """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
     class Meta:
         model = Transcription
         fields = ("id", "name", "audio", "transcription_status", "creator", "last_updated")
