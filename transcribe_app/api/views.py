@@ -72,7 +72,7 @@ class TextBlockViewSet(viewsets.ModelViewSet):
             textblock_id = [int(i) for i in request.GET.get("textblock_id").split(",")]
             text = request.data["text"]
         except:
-            AssertionError("Ошибка при получении API")
+            raise AssertionError("Ошибка при получении API")
         for i, id in enumerate(textblock_id):
             instance = TextBlock.objects.filter(id=id)
             if not instance:
