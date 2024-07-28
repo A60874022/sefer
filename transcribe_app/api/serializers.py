@@ -1,9 +1,7 @@
 import base64
 
-from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
@@ -73,14 +71,6 @@ class TextBlockSerializer(serializers.ModelSerializer):
             "cities",
             "countries",
         )
-
-
-'''class TextUpdateBlockSerializer(serializers.ModelSerializer):
-    """Сериализатор при работах с текстом на фронте. Для обьединения блоков."""
-
-    class Meta:
-        model = TextBlock
-        fields = ("id", "minute", "text",)'''
 
 
 class TextBlockGetSerializer(serializers.ModelSerializer):
