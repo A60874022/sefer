@@ -75,6 +75,14 @@ class TextBlockSerializer(serializers.ModelSerializer):
         )
 
 
+'''class TextUpdateBlockSerializer(serializers.ModelSerializer):
+    """Сериализатор при работах с текстом на фронте. Для обьединения блоков."""
+
+    class Meta:
+        model = TextBlock
+        fields = ("id", "minute", "text",)'''
+
+
 class TextBlockGetSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока при сохранении файла и ручной расшифровкой."""
 

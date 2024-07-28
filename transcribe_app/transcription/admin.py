@@ -128,3 +128,9 @@ class CountryAdmin(ModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "name_en", "confirmed", "category")}),
     )
+
+
+@admin.register(TextBlock)
+class TextBlockAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'minute', 'text', "transcription")

@@ -9,7 +9,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -52,11 +52,40 @@ class PersonalitiesViewSet(ModelViewSet):
 
 
 class TextBlockViewSet(viewsets.ModelViewSet):
+    "Класс для работы с текстовыми блоками."
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ("transcription",)
     search_fields = ("transcription",)
+
+    @transaction.atomic
+    @action(
+        detail=False,
+        methods=["PATCH"],
+        url_name="update_transcription",
+        url_path="update_transcription",
+    )
+    def update_text_blocks(self, request):
+        "Метод для обьединения текстовых блоков."
+        try:
+            textblock_id = [int(i) for i in request.GET.get("textblock_id").split(",")]
+            text = request.data["text"]
+        except:
+            AssertionError("Ошибка при получении API")
+        for i, id in enumerate(textblock_id):
+            instance = TextBlock.objects.filter(id=id)
+            if not instance:
+                return Response(
+                    {'error': 'Этого текстового блока нет в списке'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if i == 0:
+                print(i)
+                TextBlock.objects.filter(id=id).update(text=text)
+            else:
+                instance.delete()
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class TranscriptionViewSet(ModelViewSet):
