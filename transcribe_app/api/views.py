@@ -81,7 +81,6 @@ class TextBlockViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             if i == 0:
-                print(i)
                 TextBlock.objects.filter(id=id).update(text=text)
             else:
                 instance.delete()
