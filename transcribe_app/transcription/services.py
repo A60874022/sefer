@@ -1,4 +1,3 @@
-import os
 import time
 from http import HTTPStatus
 
@@ -102,7 +101,7 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
-    a = upload_file_to_bucket(obj_id)  # загрузка файла в бакет
+    upload_file_to_bucket(obj_id)  # загрузка файла в бакет
     file_url = create_bucket_url(obj_id)
     post_url = (
         "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
@@ -118,7 +117,6 @@ def create_transcription(obj_id: int) -> list:
     if req.status_code != HTTPStatus.OK:
         raise requests.HTTPError("Произошла ошибка при отправке HTTP запроса.")
     data = req.json()
-    id = data["id"]
     while True:
         time.sleep(1)
         get_url = "https://operation.api.cloud.yandex.net/operations/{id}"
@@ -134,26 +132,35 @@ def create_transcription(obj_id: int) -> list:
 
 
 def post_table_transcription(request, *args, **kwargs):
+    """Получение данных их запроса для преобразования текстовых блоков.
+       Передается в виде partial=1,2,3."""
     try:
         name = request.data["name"]
         partial = request.GET.get("partial")
         audio = request.data["audio"]
         request_user = request.user
+        print(request_user)
         creator = User.objects.filter(username=request_user).first()
         transcription_status = request.data["transcription_status"]
     except:
         AssertionError("Ошибка при получении API")
     if partial:
         transcription_date = timezone.now()
-        transcription = Transcription.objects.create(creator_id=creator.id, name=name, audio=audio,
-                                                     transcription_date=transcription_date,
-                                                     transcription_status=transcription_status)
+        transcription = Transcription.objects.create(
+            creator_id=creator.id,
+            name=name,
+            audio=audio,
+            transcription_date=transcription_date,
+            transcription_status=transcription_status,
+        )
         return transcription
     else:
         raise ValueError("Partial не должен быть пустым.")
 
 
 def get_user(self, serializer):
+    """Получение текущего пользователя
+    для сохранения в БД при различных операциях."""
     request_user = self.request.user
     creator = User.objects.filter(username=request_user).first()
     serializer.save(creator_id=creator.id)

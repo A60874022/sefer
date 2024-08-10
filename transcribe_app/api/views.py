@@ -3,34 +3,34 @@ from api.serializers import (CitySerializer, CountryGlossarySerializer,
                              PersonalitiesSerializer, TextBlockSerializer,
                              TranscriptionGetSerializer,
                              TranscriptionPartialSerializer,
-                             TranscriptionSerializer,
-                             TranscriptionShortSerializer)
+                             TranscriptionSerializer)
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
-from transcription.services import (create_bucket_url, create_transcription,
-                                    delete_file_in_backet, get_audio_file,
-                                    get_user, post_table_transcription)
-from users.models import User
+from transcription.services import (create_transcription,
+                                    delete_file_in_backet, get_user,
+                                    post_table_transcription)
 
 from .yasg import glossary_schema_dict
 
 
 class KeywordsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вьюсет для работы со словами."""
+
     serializer_class = KeywordsSerializer
     queryset = Keywords.objects.all()
 
 
 class CityViewSet(ModelViewSet):
+    """Вьюсет для работы со городами."""
+
     serializer_class = CitySerializer
     queryset = City.objects.all()
 
@@ -39,11 +39,15 @@ class CityViewSet(ModelViewSet):
 
 
 class CountryViewSet(ModelViewSet):
+    """Вьюсет для работы со странами."""
+
     serializer_class = CountrySerializer
     queryset = Country.objects.all()
 
 
 class PersonalitiesViewSet(ModelViewSet):
+    """Вьюсет для работы с персоналиями."""
+
     serializer_class = PersonalitiesSerializer
     queryset = Personalities.objects.all()
 
@@ -52,7 +56,8 @@ class PersonalitiesViewSet(ModelViewSet):
 
 
 class TextBlockViewSet(viewsets.ModelViewSet):
-    "Класс для работы с текстовыми блоками."
+    """Вьюсет для работы с текстовыми блоками."""
+
     serializer_class = TextBlockSerializer
     queryset = TextBlock.objects.all()
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
@@ -77,8 +82,8 @@ class TextBlockViewSet(viewsets.ModelViewSet):
             instance = TextBlock.objects.filter(id=id)
             if not instance:
                 return Response(
-                    {'error': 'Этого текстового блока нет в списке'},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Этого текстового блока нет в списке"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             if i == 0:
                 TextBlock.objects.filter(id=id).update(text=text)
@@ -88,18 +93,13 @@ class TextBlockViewSet(viewsets.ModelViewSet):
 
 
 class TranscriptionViewSet(ModelViewSet):
-    """
-    Вьюсет Транскрипции.
-    Поддерживаемые методы по умолчанию `create()`, `retrieve()`, `update()`,
-    `partial_update()`, `destroy()` and `list()` actions.
-    Предназначен для автоматической расшифровки.
-    """
+    """Вьюсет для автоматической расшифровки всего обьема аудио."""
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
 
     def get_serializer_class(self):
-        """Функция выбора класса - сериализатора в зависимости от метода"""
+        """Функция выбора класса - сериализатора в зависимости от метода."""
         if self.request.method == "GET":
             return TranscriptionGetSerializer
         return TranscriptionSerializer
@@ -112,34 +112,9 @@ class TranscriptionViewSet(ModelViewSet):
         delete_file_in_backet(obj_id=instance.id)
         return super().destroy(request, *args, **kwargs)
 
-    @action(
-        detail=False,
-        methods=["retrieve"],
-        url_name="create_transcription",
-        url_path="create_transcription",
-    )
-    def create_transcription(self, request, pk=None):
-        transcription = get_object_or_404(Transcription, pk=pk)
-        transcription.audio_url = create_bucket_url(pk)
-        transcription.audio = get_audio_file(pk)
-        text = create_transcription(pk)
-        TextBlock.objects.bulk_create(
-            [
-                TextBlock(
-                    minute=minute, text=" ".join(chunk), transcription=transcription
-                )
-                for minute, chunk in enumerate(text, start=1)
-            ]
-        )
-        transcription.save()
-        serializer = self.get_serializer(transcription)
-        return Response(serializer.data)
-
 
 class GetGlossaryAPIView(APIView):
-    """
-    Получение списка тэгов.
-    """
+    """Получение списка тэгов."""
 
     @swagger_auto_schema(responses=glossary_schema_dict)
     def get(self, request):
@@ -156,15 +131,9 @@ class GetGlossaryAPIView(APIView):
         return Response(glossary_data)
 
 
-class TranscriptionShortList(ListAPIView):
-    queryset = Transcription.objects.all()
-    serializer_class = TranscriptionShortSerializer
-
-
 class TranscriptionSaveViewSet(ModelViewSet):
-    """
-    Предназначен для сохранения, удаления, обновления файлов без расшифровки аудио.
-    """
+    """Предназначен для сохранения, удаления,
+    обновления файлов без расшифровки аудио."""
 
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
@@ -174,9 +143,7 @@ class TranscriptionSaveViewSet(ModelViewSet):
 
 
 class TranscriptionPartialViewSet(ModelViewSet):
-    """
-    Предназначен для частичной автоматической расшифровки аудио.
-    """
+    """Предназначен для частичной автоматической расшифровки аудио."""
 
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
@@ -186,10 +153,10 @@ class TranscriptionPartialViewSet(ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        """
-        Создание транскрипции с текстовыми блоками через пост запрос.
+        """Создание транскрипции с текстовыми блоками через пост запрос.
         Поля тегов добавляются отдельно после создания текстового блока.
         """
+
         transcription = post_table_transcription(request, *args, **kwargs)
         partial = request.GET.get("partial")
         last = Transcription.objects.filter(pk__gt=1).last()

@@ -1,5 +1,3 @@
-import base64
-
 from django.db import transaction
 from django.utils import timezone
 from rest_framework import serializers
@@ -24,7 +22,11 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ("id", "name", "country",)
+        fields = (
+            "id",
+            "name",
+            "country",
+        )
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -34,7 +36,11 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ("id", "name", "cities",)
+        fields = (
+            "id",
+            "name",
+            "cities",
+        )
 
 
 class CountryGlossarySerializer(serializers.ModelSerializer):
@@ -42,7 +48,11 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ("id", "name", "creator",)
+        fields = (
+            "id",
+            "name",
+            "creator",
+        )
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
@@ -78,7 +88,11 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextBlock
-        fields = ("id", "minute", "text",)
+        fields = (
+            "id",
+            "minute",
+            "text",
+        )
 
 
 class TranscriptionSerializer(serializers.ModelSerializer):
@@ -86,7 +100,12 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "transcription_status",)
+        fields = (
+            "id",
+            "name",
+            "audio",
+            "transcription_status",
+        )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -95,8 +114,9 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         Поля тегов добавляются отдельно после создания текстового блока.
         """
         transcription_date = timezone.now()
-        transcription = Transcription.objects.create(**validated_data,
-                                                     transcription_date=transcription_date)
+        transcription = Transcription.objects.create(
+            **validated_data, transcription_date=transcription_date
+        )
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
@@ -112,24 +132,29 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         return transcription
 
 
-class TranscriptionShortSerializer(serializers.ModelSerializer):
-    """Сериализатор для простого списка аудио."""
-
-    class Meta:
-        model = Transcription
-        fields = ("id", "name",)
-
-
 class TranscriptionPartialSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки частичной автоматической расшифровки аудио."""
 
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "transcription_status",)
+        fields = (
+            "id",
+            "name",
+            "audio",
+            "transcription_status",
+        )
 
 
 class TranscriptionGetSerializer(serializers.ModelSerializer):
     """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
+
     class Meta:
         model = Transcription
-        fields = ("id", "name", "audio", "transcription_status", "creator", "last_updated")
+        fields = (
+            "id",
+            "name",
+            "audio",
+            "transcription_status",
+            "creator",
+            "last_updated",
+        )

@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-from django.utils.html import format_html
 from django.utils.timezone import now
 
 from .models import (City, Country, Keywords, Personalities, TextBlock,
@@ -10,24 +9,28 @@ from .models import (City, Country, Keywords, Personalities, TextBlock,
 class TextBlockInline(admin.StackedInline):
     model = TextBlock
     extra = 1
+    classes = ['collapse']
 
 
 @admin.register(Transcription)
 class TranscriptionAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'name', 'audio', "audio_duration", 'code',
-        'transcription_status', "transcription_date", 'last_updated', "creator")
-    search_fields = ('id', 'name')
-    list_filter = ('transcription_status',)
-    ordering = ('id', 'name', 'audio', 'last_updated')
-    inlines = [TextBlockInline]
-    readonly_fields = ('id', 'last_updated')
+    """Класс для админпанели представления класса Transcription."""
 
-    def audio_duration(self, obj):
-        """
-        Возвращает длительность аудиофайла в формате минуты:секунды.
-        """
-        pass  # нужно уточнить возможное решение
+    list_display = (
+        "id",
+        "name",
+        "audio",
+        "code",
+        "transcription_status",
+        "transcription_date",
+        "last_updated",
+        "creator",
+    )
+    search_fields = ("id", "name")
+    list_filter = ("transcription_status",)
+    ordering = ("id", "name", "audio", "last_updated")
+    inlines = [TextBlockInline]
+    readonly_fields = ("id", "last_updated")
 
     def get_readonly_fields(self, request, obj=None):
         """
@@ -47,17 +50,14 @@ class TranscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(City)
 class CityAdmin(ModelAdmin):
-    list_display = ("id", "name", "country", "last_updated", "confirmed", 'creator')
-    search_fields = ('id', "name", "confirmed")
+    """Класс для админпанели представления класса City."""
+
+    list_display = ("id", "name", "country", "last_updated", "confirmed", "creator")
+    search_fields = ("id", "name", "confirmed")
     list_filter = ("country__cities", "confirmed")
 
-    readonly_fields = ('id', 'last_updated')
-    ordering = ('id', 'name', 'last_updated', "confirmed")
-
-    '''def make_confirmed(self, request, queryset):
-        queryset.update(confirmed=True)
-
-    make_confirmed.short_description = "Отметьте выбранные места как подтвержденные"  # noqa'''
+    readonly_fields = ("id", "last_updated")
+    ordering = ("id", "name", "last_updated", "confirmed")
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -69,13 +69,15 @@ class CityAdmin(ModelAdmin):
 
 @admin.register(Personalities)
 class PersonalitiesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'name_en', 'is_confirmed', 'last_updated', 'creator')
-    list_filter = ('is_confirmed',)
-    search_fields = ('id', 'name', 'name_en')
-    list_display_links = ('id', 'name', 'name_en')
-    list_editable = ('is_confirmed',)
-    readonly_fields = ('id', 'last_updated')
-    ordering = ('id', 'name', 'name_en', 'last_updated')
+    """Класс для админпанели представления класса Personalities."""
+
+    list_display = ("id", "name", "name_en", "is_confirmed", "last_updated", "creator")
+    list_filter = ("is_confirmed",)
+    search_fields = ("id", "name", "name_en")
+    list_display_links = ("id", "name", "name_en")
+    list_editable = ("is_confirmed",)
+    readonly_fields = ("id", "last_updated")
+    ordering = ("id", "name", "name_en", "last_updated")
 
     fieldsets = (
         (None, {"fields": ("name", "name_en", "is_confirmed")}),
@@ -98,11 +100,17 @@ class PersonalitiesAdmin(admin.ModelAdmin):
 
 @admin.register(Keywords)
 class KeywordsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'name_en', 'parent', 'last_updated')
-    list_filter = ('name', 'name_en', 'last_updated',)
-    search_fields = ("id", 'name', 'name_en', 'parent')
-    readonly_fields = ('id', 'last_updated')
-    ordering = ('id', 'name', 'name_en', 'last_updated')
+    """Класс для админпанели представления класса Keywords."""
+
+    list_display = ("id", "name", "name_en", "parent", "last_updated")
+    list_filter = (
+        "name",
+        "name_en",
+        "last_updated",
+    )
+    search_fields = ("id", "name", "name_en", "parent")
+    readonly_fields = ("id", "last_updated")
+    ordering = ("id", "name", "name_en", "last_updated")
     fieldsets = (
         (None, {"fields": ("name", "name_en", "parent")}),
         (
@@ -117,14 +125,21 @@ class KeywordsAdmin(admin.ModelAdmin):
 
 @admin.register(Country)
 class CountryAdmin(ModelAdmin):
-    list_display = ("id", "name", "name_en", "category", "last_updated", "confirmed", )
+    """Класс для админпанели представления класса Country."""
+
+    list_display = (
+        "id",
+        "name",
+        "name_en",
+        "category",
+        "last_updated",
+        "confirmed",
+    )
     list_filter = ("category", "confirmed")
-    ordering = ('id', 'name', 'name_en', "confirmed")
+    ordering = ("id", "name", "name_en", "confirmed")
     search_fields = ("id", "name", "name_en", "category", "confirmed")
 
     def make_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
 
-    fieldsets = (
-        (None, {"fields": ("name", "name_en", "confirmed", "category")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "name_en", "confirmed", "category")}),)
