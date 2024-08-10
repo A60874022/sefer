@@ -76,10 +76,10 @@ USE_TZ = True
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE", default="django.db.backends.postgresql"),
-        "NAME": os.environ.get("POSTGRES_DB", default="postgres4"),
+        "NAME": os.environ.get("POSTGRES_DB", default="postgres"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("DB_HOST", default="localhost"),
+        "HOST": os.environ.get("DB_HOST", default="db"),
         "PORT": os.environ.get("DB_PORT", default="5432"),
         "TIME_ZONE": TIME_ZONE,
     }

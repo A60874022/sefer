@@ -139,7 +139,6 @@ def post_table_transcription(request, *args, **kwargs):
         partial = request.GET.get("partial")
         audio = request.data["audio"]
         request_user = request.user
-        print(request_user)
         creator = User.objects.filter(username=request_user).first()
         transcription_status = request.data["transcription_status"]
     except:
