@@ -51,7 +51,7 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "creator",
+            "cities"
         )
 
 

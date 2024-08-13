@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 
 DEBUG = bool(strtobool(os.environ.get("DEBUG", default="True")))
 
-ALLOWED_HOSTS = os.environ.get("HOST", default="127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.environ.get("HOST", default="127.0.0.1,localhost, testserver").split(",")
 
 INSTALLED_APPS = (
     "django.contrib.admin",
@@ -76,10 +76,10 @@ USE_TZ = True
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE", default="django.db.backends.postgresql"),
-        "NAME": os.environ.get("POSTGRES_DB", default="postgres"),
+        "NAME": os.environ.get("POSTGRES_DB", default="postgres4"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("DB_HOST", default="db"),
+        "HOST": os.environ.get("DB_HOST", default="localhost"),
         "PORT": os.environ.get("DB_PORT", default="5432"),
         "TIME_ZONE": TIME_ZONE,
     }
@@ -118,7 +118,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 SIMPLE_JWT = {
