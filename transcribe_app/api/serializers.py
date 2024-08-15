@@ -73,7 +73,8 @@ class TextBlockSerializer(serializers.ModelSerializer):
         model = TextBlock
         fields = (
             "id",
-            "minute",
+            "time_start",
+            "time_end",
             "text",
             "transcription",
             "keywords",
@@ -90,7 +91,8 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
         model = TextBlock
         fields = (
             "id",
-            "minute",
+            "time_start",
+            "time_end",
             "text",
         )
 
@@ -122,7 +124,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute, text=" ".join(chunk), transcription=transcription
+                    time_start=minute, time_end=minute + 1, text=" ".join(chunk), transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]

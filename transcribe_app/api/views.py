@@ -164,7 +164,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute, text=" ".join(chunk), transcription=transcription
+                    time_start=minute, time_end=minute + 1, text=" ".join(chunk), transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
                 if str(minute) in partial
