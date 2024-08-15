@@ -129,7 +129,6 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         )
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
-        print(text)
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
