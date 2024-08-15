@@ -27,10 +27,12 @@ def create_text_blocks(text: list) -> list:
     времени. В качестве вводных данных принимает список
     из кортежей со значениями (время, слово).
     """
+    print(3)
     if not isinstance(text, list):
         raise TypeError("Invalid type. Text type must be a list.")
     text_blocks = [[]]
     start = text[0][0]
+    print(4)
     for curr_time, word in text:
         if curr_time - start <= 60:  # 60 - значение интервала(в сек.)
             text_blocks[-1].append(word)
@@ -78,12 +80,15 @@ def upload_file_to_bucket(obj_id: int) -> None:
     s3 = session.client(
         service_name="s3", endpoint_url="https://storage.yandexcloud.net"
     )
+    print(5)
     file_name = get_audio_file(obj_id).split("/")[-1]
+    print(6)
     s3.upload_file(
         f"{settings.MEDIA_ROOT}/{get_audio_file(obj_id)}",
         "sefer",
         file_name,
     )
+    print(7)
 
 
 def create_bucket_url(obj_id: int) -> str:
@@ -101,8 +106,11 @@ def create_transcription(obj_id: int) -> list:
     На выходе получаем список из слов разбитым по временным интервалам:
     [[word1, word2, word3], [word4, word5, word6], ...].
     """
+    print(1)
     upload_file_to_bucket(obj_id)  # загрузка файла в бакет
+    print(10)
     file_url = create_bucket_url(obj_id)
+    print(2)
     post_url = (
         "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
     )
@@ -160,6 +168,6 @@ def post_table_transcription(request, *args, **kwargs):
 def get_user(self, serializer):
     """Получение текущего пользователя
     для сохранения в БД при различных операциях."""
-    request_user = self.request.user
-    creator = User.objects.filter(username=request_user).first()
-    serializer.save(creator_id=creator.id)
+    # request_user = self.request.user
+    # creator = User.objects.filter(username=request_user).first()
+    serializer.save(creator_id=1)  # creator.id)
