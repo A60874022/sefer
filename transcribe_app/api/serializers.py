@@ -19,6 +19,7 @@ class KeywordsSerializer(serializers.ModelSerializer):
 
 class CitySerializer(serializers.ModelSerializer):
     """Сериализатор для городов."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = City
@@ -26,6 +27,7 @@ class CitySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "country",
+            "creator"
         )
 
 
@@ -57,12 +59,14 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
     """Сериализатор для персоналий."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Personalities
         fields = (
             "id",
             "name",
+            "creator"
         )
 
 
@@ -97,6 +101,7 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
 
 class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио для автоматической расшифровки."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Transcription
@@ -105,6 +110,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "transcription_status",
+            "creator"
         )
 
     @transaction.atomic
@@ -134,6 +140,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
 class TranscriptionPartialSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки частичной автоматической расшифровки аудио."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Transcription
@@ -142,11 +149,13 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "transcription_status",
+            "creator"
         )
 
 
 class TranscriptionGetSerializer(serializers.ModelSerializer):
     """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Transcription
@@ -157,4 +166,5 @@ class TranscriptionGetSerializer(serializers.ModelSerializer):
             "transcription_status",
             "creator",
             "last_updated",
+            "creator"
         )

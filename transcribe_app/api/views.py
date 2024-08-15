@@ -15,7 +15,7 @@ from rest_framework.viewsets import ModelViewSet
 from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_transcription,
-                                    delete_file_in_backet, get_user,
+                                    delete_file_in_backet,
                                     post_table_transcription)
 
 from .yasg import glossary_schema_dict
@@ -34,9 +34,6 @@ class CityViewSet(ModelViewSet):
     serializer_class = CitySerializer
     queryset = City.objects.all()
 
-    def perform_create(self, serializer):
-        get_user(self, serializer)
-
 
 class CountryViewSet(ModelViewSet):
     """Вьюсет для работы со странами."""
@@ -50,9 +47,6 @@ class PersonalitiesViewSet(ModelViewSet):
 
     serializer_class = PersonalitiesSerializer
     queryset = Personalities.objects.all()
-
-    def perform_create(self, serializer):
-        get_user(self, serializer)
 
 
 class TextBlockViewSet(viewsets.ModelViewSet):
@@ -104,9 +98,6 @@ class TranscriptionViewSet(ModelViewSet):
             return TranscriptionGetSerializer
         return TranscriptionSerializer
 
-    def perform_create(self, serializer):
-        get_user(self, serializer)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         delete_file_in_backet(obj_id=instance.id)
@@ -138,18 +129,12 @@ class TranscriptionSaveViewSet(ModelViewSet):
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
 
-    def perform_create(self, serializer):
-        get_user(self, serializer)
-
 
 class TranscriptionPartialViewSet(ModelViewSet):
     """Предназначен для частичной автоматической расшифровки аудио."""
 
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
-
-    def perform_create(self, serializer):
-        get_user(self, serializer)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
