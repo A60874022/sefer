@@ -148,6 +148,7 @@ def post_table_transcription(request, *args, **kwargs):
         audio = request.data["audio"]
         request_user = request.user
         creator = User.objects.filter(username=request_user).first()
+        print(creator, 124)
         transcription_status = request.data["transcription_status"]
     except:
         AssertionError("Ошибка при получении API")
@@ -163,11 +164,3 @@ def post_table_transcription(request, *args, **kwargs):
         return transcription
     else:
         raise ValueError("Partial не должен быть пустым.")
-
-
-def get_user(self, serializer):
-    """Получение текущего пользователя
-    для сохранения в БД при различных операциях."""
-    # request_user = self.request.user
-    # creator = User.objects.filter(username=request_user).first()
-    serializer.save(creator_id=1)  # creator.id)
