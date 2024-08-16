@@ -49,9 +49,6 @@ class PersonalitiesViewSet(ModelViewSet):
     queryset = Personalities.objects.all()
 
 
-import json
-
-
 class TextBlockViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с текстовыми блоками."""
 
