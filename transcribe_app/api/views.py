@@ -49,6 +49,9 @@ class PersonalitiesViewSet(ModelViewSet):
     queryset = Personalities.objects.all()
 
 
+import json
+
+
 class TextBlockViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с текстовыми блоками."""
 
@@ -62,27 +65,25 @@ class TextBlockViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["PATCH"],
-        url_name="update_transcription",
-        url_path="update_transcription",
+        url_name="update_textblock",
+        url_path="update_textblock",
     )
     def update_text_blocks(self, request):
-        "Метод для обьединения текстовых блоков."
+        "Метод для обновления текстовых блоков."
         try:
-            textblock_id = [int(i) for i in request.GET.get("textblock_id").split(",")]
-            text = request.data["text"]
+            transcription = request.GET.get("transcription")
         except:
             raise AssertionError("Ошибка при получении API")
-        for i, id in enumerate(textblock_id):
-            instance = TextBlock.objects.filter(id=id)
-            if not instance:
-                return Response(
-                    {"error": "Этого текстового блока нет в списке"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if i == 0:
-                TextBlock.objects.filter(id=id).update(text=text)
-            else:
-                instance.delete()
+
+        old_textblocks = TextBlock.objects.filter(transcription=transcription)
+        for old_textblock in old_textblocks:
+            old_textblock.delete()
+        new_textblocks = request.data['text']
+
+        for textblock in new_textblocks:
+            new_textblock = self.get_serializer(data=textblock)
+            new_textblock.is_valid(raise_exception=True)
+            new_textblock.save()
         return Response(status=status.HTTP_201_CREATED)
 
 
@@ -143,7 +144,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
         """
 
         transcription = post_table_transcription(request, *args, **kwargs)
-        partial = request.GET.get("partial")
+        partial = ("partial")
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(

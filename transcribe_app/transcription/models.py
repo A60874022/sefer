@@ -225,12 +225,6 @@ class TextBlock(models.Model):
     class Meta:
         verbose_name = "Текстовый_блок"
         verbose_name_plural = "Текстовые_блоки"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["text", "transcription"],
-                name="uniq_transcriptions_text_block",
-            )
-        ]
 
     def __str__(self) -> str:
         return (
