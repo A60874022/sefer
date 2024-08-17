@@ -75,7 +75,7 @@ class TextBlockViewSet(viewsets.ModelViewSet):
         old_textblocks = TextBlock.objects.filter(transcription=transcription)
         old_textblocks.delete()
 
-        new_textblocks = request.data
+        new_textblocks = request.data['text']
         for textblock in new_textblocks:
             new_textblock = self.get_serializer(data=textblock)
             new_textblock.is_valid(raise_exception=True)
@@ -140,7 +140,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
         """
 
         transcription = post_table_transcription(request, *args, **kwargs)
-        partial = ("partial")
+        partial = request.GET.get("partial")
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
