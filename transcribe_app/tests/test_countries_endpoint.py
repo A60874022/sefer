@@ -6,11 +6,7 @@ import pytest
 @pytest.mark.django_db
 def test_create_api_countries(api_client):
     """Тест создания страны через API."""
-    payload = {
-        "name": "Россия",
-        "category": "modern",
-        "confirmed": "Подтверждено"
-    }
+    payload = {"name": "Россия", "category": "modern", "confirmed": "Подтверждено"}
 
     response_create = api_client.post("/api/countries/", data=payload, format="json")
     countries_id = response_create.data["id"]
@@ -28,7 +24,9 @@ def test_delete_api_countries(api_client, create_countries):
     """Тест удаления страны через API."""
     countries_id = create_countries.id
 
-    response_delete = api_client.delete(f"/api/countries/{countries_id}/", format="json")
+    response_delete = api_client.delete(
+        f"/api/countries/{countries_id}/", format="json"
+    )
     assert response_delete.status_code == HTTPStatus.NO_CONTENT
 
     response_read = api_client.get(f"/api/countries/{countries_id}/", format="json")
@@ -39,11 +37,7 @@ def test_delete_api_countries(api_client, create_countries):
 def test_update_api_countries(api_client, create_countries):
     """Тест обновления страны через API."""
     countries_id = create_countries.id
-    payload = {
-        "name": "Китай",
-        "category": "modern",
-        "confirmed": "Подтверждено"
-    }
+    payload = {"name": "Китай", "category": "modern", "confirmed": "Подтверждено"}
 
     response_update = api_client.patch(
         f"/api/countries/{countries_id}/", data=payload, format="json"

@@ -21,9 +21,7 @@ def test_create_api_cities(api_client, сity_payload) -> None:
 def test_delete_api_cities(api_client, create_city) -> None:
     """Тест для проверки эндпоинта "/api/cities/" при delete запросе."""
     cities_id = create_city.id
-    response_delete = api_client.delete(
-        f"/api/cities/{cities_id}/", format="json"
-    )
+    response_delete = api_client.delete(f"/api/cities/{cities_id}/", format="json")
     assert response_delete.status_code == HTTPStatus.NO_CONTENT
     response_read = api_client.get(f"/api/cities/{cities_id}/", format="json")
     assert response_read.status_code == HTTPStatus.NOT_FOUND

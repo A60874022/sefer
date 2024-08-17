@@ -51,7 +51,8 @@ def create_personalities(creator):
 def create_city(creator, create_countries):
     """Фикстура для создания записи о городе в БД."""
     return City.objects.create(
-        name="Пекин", country_id=create_countries.id, creator_id=creator.id)
+        name="Пекин", country_id=create_countries.id, creator_id=creator.id
+    )
 
 
 @pytest.fixture
@@ -64,25 +65,32 @@ def сity_payload(create_countries):
 def create_transcription_2(creator):
     """Фикстура для создания записи о аудиозаписи в БД."""
     return Transcription.objects.create(
-        name="Горы", code="modern", transcription_status="not_sent", creator_id=creator.id)
+        name="Горы",
+        code="modern",
+        transcription_status="not_sent",
+        creator_id=creator.id,
+    )
 
 
 @pytest.fixture
 def create_transcription(creator):
     """Фикстура для создания записи о аудиозаписи в БД."""
     return Transcription.objects.create(
-        name="Россия", code="озера", transcription_status="not_sent", creator_id=creator.id)
+        name="Россия",
+        code="озера",
+        transcription_status="not_sent",
+        creator_id=creator.id,
+    )
 
 
 @pytest.fixture
 def create_textblock(creator, create_transcription):
     """Фикстура для создания записи о текст-блоке в БД."""
     textblock_data = {
-        'time_start': 1,
-        'time_end': 2,
-        'text': 'ракета',
-        'transcription_id': create_transcription.id,
-
+        "time_start": 1,
+        "time_end": 2,
+        "text": "ракета",
+        "transcription_id": create_transcription.id,
     }
     return TextBlock.objects.create(**textblock_data)
 
@@ -91,43 +99,47 @@ def create_textblock(creator, create_transcription):
 def textblock_payload(creator, create_transcription):
     """Фикстура для создания json для сущности текстовый блок."""
     return {
-        'time_start': 1,
-        'time_end': 2,
-        'text': 'Природа',
-        'transcription': create_transcription.id,
-
+        "time_start": 1,
+        "time_end": 2,
+        "text": "Природа",
+        "transcription": create_transcription.id,
     }
 
 
 @pytest.fixture
 def create_many_textblock(creator, create_transcription, create_transcription_2):
     """Фикстура для создания записи о текст-блоке в БД."""
-    textblock_data = [{
-        'time_start': 1,
-        'time_end': 2,
-        'text': '1',
-        'transcription_id': create_transcription.id},
-
-        {'time_start': 3,
-         'time_end': 4,
-         'text': '10',
-         'transcription_id': create_transcription.id},
-
-        {'time_start': 2,
-         'time_end': 4,
-         'text': '100',
-         'transcription_id': create_transcription_2.id},
-
-        {'time_start': 5,
-         'time_end': 7,
-         'text': '1000',
-         'transcription_id': create_transcription.id},
-
-        {'time_start': 6,
-         'time_end': 8,
-         'text': '10000',
-         'transcription_id': create_transcription_2.id}
+    textblock_data = [
+        {
+            "time_start": 1,
+            "time_end": 2,
+            "text": "1",
+            "transcription_id": create_transcription.id,
+        },
+        {
+            "time_start": 3,
+            "time_end": 4,
+            "text": "10",
+            "transcription_id": create_transcription.id,
+        },
+        {
+            "time_start": 2,
+            "time_end": 4,
+            "text": "100",
+            "transcription_id": create_transcription_2.id,
+        },
+        {
+            "time_start": 5,
+            "time_end": 7,
+            "text": "1000",
+            "transcription_id": create_transcription.id,
+        },
+        {
+            "time_start": 6,
+            "time_end": 8,
+            "text": "10000",
+            "transcription_id": create_transcription_2.id,
+        },
     ]
     new_textblock_objs = [TextBlock(**textblock) for textblock in textblock_data]
-    a = TextBlock.objects.bulk_create(new_textblock_objs)
-    return a
+    return TextBlock.objects.bulk_create(new_textblock_objs)
