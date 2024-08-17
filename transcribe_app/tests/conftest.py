@@ -108,7 +108,7 @@ def textblock_payload(creator, create_transcription):
 
 @pytest.fixture
 def create_many_textblock(creator, create_transcription, create_transcription_2):
-    """Фикстура для создания записи о текст-блоке в БД."""
+    """Фикстура для создания записи в текст-блоке в БД."""
     textblock_data = [
         {
             "time_start": 1,
