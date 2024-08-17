@@ -27,7 +27,7 @@ class CitySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "country",
-            "creator"
+            "creator",
         )
 
 
@@ -53,7 +53,7 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "cities"
+
         )
 
 
@@ -66,7 +66,7 @@ class PersonalitiesSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "creator"
+            "creator",
         )
 
 
@@ -77,7 +77,8 @@ class TextBlockSerializer(serializers.ModelSerializer):
         model = TextBlock
         fields = (
             "id",
-            "minute",
+            "time_start",
+            "time_end",
             "text",
             "transcription",
             "keywords",
@@ -89,13 +90,16 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
 class TextBlockGetSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока при сохранении файла и ручной расшифровкой."""
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = TextBlock
         fields = (
             "id",
-            "minute",
+            "time_start",
+            "time_end",
             "text",
+            "creator",
         )
 
 
@@ -110,7 +114,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "transcription_status",
-            "creator"
+            "creator",
         )
 
     @transaction.atomic
@@ -128,7 +132,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    minute=minute, text=" ".join(chunk), transcription=transcription
+                    time_start=minute, time_end=minute + 1, text=" ".join(chunk), transcription=transcription
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]
@@ -149,7 +153,7 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
             "name",
             "audio",
             "transcription_status",
-            "creator"
+            "creator",
         )
 
 

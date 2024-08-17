@@ -207,7 +207,8 @@ class Keywords(models.Model):
 class TextBlock(models.Model):
     """Модель текстовых блоков."""
 
-    minute = models.PositiveIntegerField("Минута")
+    time_start = models.PositiveIntegerField("Начало текстового блока")
+    time_end = models.PositiveIntegerField("Конец текстового блока")
     text = models.TextField("Текст")
     transcription = models.ForeignKey(
         Transcription, on_delete=models.CASCADE, related_name="text_blocks", blank=True
@@ -224,15 +225,8 @@ class TextBlock(models.Model):
     class Meta:
         verbose_name = "Текстовый_блок"
         verbose_name_plural = "Текстовые_блоки"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["minute", "text", "transcription"],
-                name="uniq_transcriptions_text_block",
-            )
-        ]
 
     def __str__(self) -> str:
         return (
             f"Название транскрипции: {self.transcription.name}. "
-            f"Минута: {self.minute}"
         )
