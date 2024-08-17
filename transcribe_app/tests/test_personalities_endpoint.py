@@ -43,7 +43,7 @@ def test_delete_api_personalities(api_client, create_personalities) -> None:
 
 @pytest.mark.django_db
 def test_update_api_personalities(api_client, create_personalities) -> None:
-    """Тест для проверки эндпоинта "/api/personalities/" при delete запросе."""
+    """Тест для проверки эндпоинта "/api/personalities/" при update запросе."""
 
     payload = {
         "name": "Китай",

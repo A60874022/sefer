@@ -31,7 +31,7 @@ def test_delete_api_cities(api_client, create_city) -> None:
 
 @pytest.mark.django_db
 def test_update_api_cities(api_client, create_city, сity_payload) -> None:
-    """Тест для проверки эндпоинта "/api/cities/" при delete запросе."""
+    """Тест для проверки эндпоинта "/api/cities/" при update запросе."""
     cities_id = create_city.id
 
     response_update = api_client.patch(
