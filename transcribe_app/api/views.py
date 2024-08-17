@@ -75,7 +75,7 @@ class TextBlockViewSet(viewsets.ModelViewSet):
         old_textblocks = TextBlock.objects.filter(transcription=transcription)
         old_textblocks.delete()
 
-        new_textblocks = request.data['text']
+        new_textblocks = request.data
         for textblock in new_textblocks:
             new_textblock = self.get_serializer(data=textblock)
             new_textblock.is_valid(raise_exception=True)
