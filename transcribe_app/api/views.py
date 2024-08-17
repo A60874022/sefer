@@ -73,10 +73,9 @@ class TextBlockViewSet(viewsets.ModelViewSet):
             raise AssertionError("Ошибка при получении API")
 
         old_textblocks = TextBlock.objects.filter(transcription=transcription)
-        for old_textblock in old_textblocks:
-            old_textblock.delete()
-        new_textblocks = request.data['text']
+        old_textblocks.delete()
 
+        new_textblocks = request.data['text']
         for textblock in new_textblocks:
             new_textblock = self.get_serializer(data=textblock)
             new_textblock.is_valid(raise_exception=True)
