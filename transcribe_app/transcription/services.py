@@ -133,7 +133,7 @@ def create_transcription(obj_id: int) -> list:
 
 def post_table_transcription(request, *args, **kwargs):
     """Получение данных их запроса для преобразования текстовых блоков.
-    Передается в виде partial=1,2,3."""
+    Передается в виде partial=[1,2,3]."""
     try:
         name = request.data["name"]
         partial = request.GET.get("partial")

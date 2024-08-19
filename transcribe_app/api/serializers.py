@@ -178,5 +178,4 @@ class TranscriptionGetSerializer(serializers.ModelSerializer):
             "transcription_status",
             "creator",
             "last_updated",
-            "creator",
         )
