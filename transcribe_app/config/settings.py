@@ -16,7 +16,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 
 DEBUG = bool(strtobool(os.environ.get("DEBUG", default="True")))
 
-ALLOWED_HOSTS = os.environ.get("HOST", default="127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.environ.get("HOST", default="127.0.0.1,localhost, testserver").split(
+    ","
+)
 
 INSTALLED_APPS = (
     "django.contrib.admin",

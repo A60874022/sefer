@@ -10,8 +10,22 @@ admin.site.unregister(Group)
 @admin.register(User)
 class CustomUserAdmin(DefaultUserAdmin):
     list_display = (
-        'id', 'username', 'email', 'is_staff', 'last_login', 'is_active',)
-    search_fields = ('id', 'username', 'email', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active',)
-    ordering = ('id', 'username', 'email', 'is_active',)
-    readonly_fields = ('last_login', 'date_joined')
+        "id",
+        "username",
+        "email",
+        "is_staff",
+        "last_login",
+        "is_active",
+    )
+    search_fields = ("id", "username", "email", "is_staff", "is_active")
+    list_filter = (
+        "is_staff",
+        "is_active",
+    )
+    ordering = (
+        "id",
+        "username",
+        "email",
+        "is_active",
+    )
+    readonly_fields = ("last_login", "date_joined")

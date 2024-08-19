@@ -9,7 +9,7 @@ from .models import (City, Country, Keywords, Personalities, TextBlock,
 class TextBlockInline(admin.StackedInline):
     model = TextBlock
     extra = 1
-    classes = ['collapse']
+    classes = ["collapse"]
 
 
 @admin.register(Transcription)
