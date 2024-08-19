@@ -73,10 +73,9 @@ class TextBlockViewSet(viewsets.ModelViewSet):
             raise AssertionError("Ошибка при получении API")
 
         old_textblocks = TextBlock.objects.filter(transcription=transcription)
-        for old_textblock in old_textblocks:
-            old_textblock.delete()
-        new_textblocks = request.data
+        old_textblocks.delete()
 
+        new_textblocks = request.data
         for textblock in new_textblocks:
             new_textblock = self.get_serializer(data=textblock)
             new_textblock.is_valid(raise_exception=True)
@@ -141,7 +140,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
         """
 
         transcription = post_table_transcription(request, *args, **kwargs)
-        partial = "partial"
+        partial = request.GET.get("partial")
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
