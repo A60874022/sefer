@@ -73,3 +73,12 @@ def test_api_partial(api_client):
     assert (
         response.status_code == HTTPStatus.OK
     ), f"Ошибка {response.status_code} при открытиии запроса"
+
+
+@pytest.mark.django_db
+def test_api_glossary(api_client):
+    """Тест для проверки доступности эндпоинта "/api/glossary/"."""
+    response = api_client.get("/api/glossary/")
+    assert (
+        response.status_code == HTTPStatus.OK
+    ), f"Ошибка {response.status_code} при открытиии запроса"

@@ -19,6 +19,7 @@ class KeywordsSerializer(serializers.ModelSerializer):
 
 class CitySerializer(serializers.ModelSerializer):
     """Сериализатор для городов."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -53,12 +54,12 @@ class CountryGlossarySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-
         )
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
     """Сериализатор для персоналий."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -90,6 +91,7 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
 class TextBlockGetSerializer(serializers.ModelSerializer):
     """Сериализатор текстового блока при сохранении файла и ручной расшифровкой."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -105,6 +107,7 @@ class TextBlockGetSerializer(serializers.ModelSerializer):
 
 class TranscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки аудио для автоматической расшифровки."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -132,7 +135,10 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    time_start=minute, time_end=minute + 1, text=" ".join(chunk), transcription=transcription
+                    time_start=minute,
+                    time_end=minute + 1,
+                    text=" ".join(chunk),
+                    transcription=transcription,
                 )
                 for minute, chunk in enumerate(text, start=1)
             ]
@@ -144,6 +150,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
 class TranscriptionPartialSerializer(serializers.ModelSerializer):
     """Сериализатор для загрузки частичной автоматической расшифровки аудио."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -159,6 +166,7 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
 
 class TranscriptionGetSerializer(serializers.ModelSerializer):
     """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
+
     creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -170,5 +178,5 @@ class TranscriptionGetSerializer(serializers.ModelSerializer):
             "transcription_status",
             "creator",
             "last_updated",
-            "creator"
+            "creator",
         )

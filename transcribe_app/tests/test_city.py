@@ -9,7 +9,7 @@ def test_create_api_cities(api_client, сity_payload) -> None:
 
     response_create = api_client.post("/api/cities/", data=сity_payload, format="json")
     cities_id = response_create.data["id"]
-    assert response_create.status_code == 201
+    assert response_create.status_code == HTTPStatus.CREATED
     assert response_create.data["name"] == сity_payload["name"]
 
     response_read = api_client.get(f"/api/cities/{cities_id}/", format="json")

@@ -141,13 +141,16 @@ class TranscriptionPartialViewSet(ModelViewSet):
         """
 
         transcription = post_table_transcription(request, *args, **kwargs)
-        partial = ("partial")
+        partial = "partial"
         last = Transcription.objects.filter(pk__gt=1).last()
         text = create_transcription(last.id)
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
-                    time_start=minute, time_end=minute + 1, text=" ".join(chunk), transcription=transcription
+                    time_start=minute,
+                    time_end=minute + 1,
+                    text=" ".join(chunk),
+                    transcription=transcription,
                 )
                 for minute, chunk in enumerate(text, start=1)
                 if str(minute) in partial

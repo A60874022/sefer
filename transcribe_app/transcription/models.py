@@ -227,6 +227,4 @@ class TextBlock(models.Model):
         verbose_name_plural = "Текстовые_блоки"
 
     def __str__(self) -> str:
-        return (
-            f"Название транскрипции: {self.transcription.name}. "
-        )
+        return f"Название транскрипции: {self.transcription.name}. "

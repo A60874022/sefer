@@ -36,6 +36,12 @@ def create_countries():
 
 
 @pytest.fixture
+def countries_payload():
+    """Фикстура для создания json для сущности страна."""
+    return {"name": "Россия", "category": "modern", "confirmed": "Подтверждено"}
+
+
+@pytest.fixture
 def create_keywords():
     """Фикстура для создания записи о слове в БД."""
     return Keywords.objects.create(name="Горы")
@@ -45,6 +51,12 @@ def create_keywords():
 def create_personalities(creator):
     """Фикстура для создания записи о персаналии в БД ."""
     return Personalities.objects.create(name="Россия", creator_id=creator.id)
+
+
+@pytest.fixture
+def personalities_payload(creator):
+    """Фикстура для создания json для сущности персаналии."""
+    return {"name": "Россия", "creator_id": creator.id}
 
 
 @pytest.fixture
@@ -143,3 +155,22 @@ def create_many_textblock(creator, create_transcription, create_transcription_2)
     ]
     new_textblock_objs = [TextBlock(**textblock) for textblock in textblock_data]
     return TextBlock.objects.bulk_create(new_textblock_objs)
+
+
+@pytest.fixture
+def textblock_payload_update(creator, create_transcription):
+    """Фикстура для создания json для сущности текстовый блок."""
+    return [
+        {
+            "time_start": 1,
+            "time_end": 2,
+            "text": "тестовые данные 1",
+            "transcription": create_transcription.id,
+        },
+        {
+            "time_start": 3,
+            "time_end": 4,
+            "text": "тестовые данные 2",
+            "transcription": create_transcription.id,
+        },
+    ]
