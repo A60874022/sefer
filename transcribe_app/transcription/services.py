@@ -9,6 +9,8 @@ from users.models import User
 
 from .models import Transcription
 
+# from api.serializers import EmptyTextBlockSerializer
+
 
 def check_obj_id_type(obj_id: int) -> int:
     """
@@ -155,3 +157,24 @@ def post_table_transcription(request, *args, **kwargs):
         return transcription
     else:
         raise ValueError("Partial не должен быть пустым.")
+
+
+def post_empty_text_block(request, *args, **kwargs):
+    """Получение данных их запроса для преобразования текстовых блоков."""
+    try:
+        name = request.data["name"]
+        audio = request.data["audio"]
+        request_user = request.user
+        creator = User.objects.filter(username=request_user).first()
+        transcription_status = request.data["transcription_status"]
+    except:
+        AssertionError("Ошибка при получении API")
+
+    transcription = Transcription.objects.create(
+        creator_id=creator.id,
+        name=name,
+        audio=audio,
+        transcription_date=timezone.now(),
+        transcription_status=transcription_status,
+    )
+    return transcription
