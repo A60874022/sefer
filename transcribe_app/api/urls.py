@@ -1,10 +1,10 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (CityViewSet, CountryViewSet, GetGlossaryAPIView,
-                    KeywordsViewSet, PersonalitiesViewSet, TextBlockViewSet,
-                    TranscriptionPartialViewSet, TranscriptionSaveViewSet,
-                    TranscriptionViewSet)
+from .views import (CityViewSet, CountryViewSet, EmptyTextBlockViewSet,
+                    GetGlossaryAPIView, KeywordsViewSet, PersonalitiesViewSet,
+                    TextBlockViewSet, TranscriptionPartialViewSet,
+                    TranscriptionSaveViewSet, TranscriptionViewSet)
 from .yasg import urlpatterns as docs_url
 
 router = DefaultRouter()
@@ -18,6 +18,7 @@ router.register(
     r"transcriptions_save", TranscriptionSaveViewSet, basename="transcriptions_save"
 )
 router.register(r"partial", TranscriptionPartialViewSet, basename="partial")
+router.register(r"empty_block", EmptyTextBlockViewSet, basename="empty_text_block")
 
 urlpatterns = [
     path("", include(router.urls)),

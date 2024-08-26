@@ -164,18 +164,6 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
         )
 
 
-class TranscriptionGetSerializer(serializers.ModelSerializer):
+class TranscriptionGetSerializer(TranscriptionPartialSerializer):
     """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
-
-    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Transcription
-        fields = (
-            "id",
-            "name",
-            "audio",
-            "transcription_status",
-            "creator",
-            "last_updated",
-        )
+    pass

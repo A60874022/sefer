@@ -16,6 +16,7 @@ from transcription.models import (City, Country, Keywords, Personalities,
                                   TextBlock, Transcription)
 from transcription.services import (create_transcription,
                                     delete_file_in_backet,
+                                    post_empty_text_block,
                                     post_table_transcription)
 
 from .yasg import glossary_schema_dict
@@ -159,3 +160,25 @@ class TranscriptionPartialViewSet(ModelViewSet):
         serializer = self.get_serializer(transcription)
         delete_file_in_backet(last.id)
         return Response(serializer.data)
+
+
+class EmptyTextBlockViewSet(viewsets.ViewSet):
+    """Сохранение файла без расшифровки и
+      пустых текстовых блоков в заданной количестве.
+    """
+
+    def create(self, request):
+        transcription = post_empty_text_block(request)
+        quantity_textblocks = int(request.data["quantity"])
+        TextBlock.objects.bulk_create(
+            [
+                TextBlock(
+                    time_start=i,
+                    time_end=i + 1,
+                    text="",
+                    transcription=transcription,
+                )
+                for i in range(1, quantity_textblocks - 1)
+            ]
+        )
+        return Response(status=status.HTTP_201_CREATED)
