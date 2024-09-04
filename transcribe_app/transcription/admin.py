@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.utils.timezone import now
-from import_export.admin import ExportMixin
 
 from .models import (City, Country, Keywords, Personalities, TextBlock,
                      Transcription)
@@ -13,13 +12,8 @@ class TextBlockInline(admin.StackedInline):
     classes = ["collapse"]
 
 
-from import_export import fields, widgets
-from import_export.admin import ExportActionMixin, ImportExportModelAdmin
-from import_export.widgets import ForeignKeyWidget, NumberWidget
-
-
 @admin.register(Transcription)
-class TranscriptionAdmin(ExportMixin, admin.ModelAdmin):
+class TranscriptionAdmin(admin.ModelAdmin):
     """Класс для админпанели представления класса Transcription."""
 
     list_display = (
