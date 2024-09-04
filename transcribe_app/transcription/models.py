@@ -41,11 +41,11 @@ class Transcription(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} ({self.code})"
+        return f"{self.name}"
 
     class Meta:
-        verbose_name = "Транскрипция"
-        verbose_name_plural = "Транскрипции"
+        verbose_name = "Каталог записей"
+        verbose_name_plural = "Каталоги записей"
 
     def __nonzero__(self):
         return bool(self.audio)
@@ -197,7 +197,7 @@ class Keywords(models.Model):
     last_updated = models.DateTimeField("Обновлено", auto_now=True)
 
     def __str__(self):
-        return f"{self.name} / {self.name_en}"
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Ключевое слово"

@@ -19,6 +19,7 @@ from transcription.services import (create_transcription,
                                     post_empty_text_block,
                                     post_table_transcription)
 
+from .permissions import CreaterOnly
 from .yasg import glossary_schema_dict
 
 
@@ -89,6 +90,10 @@ class TranscriptionViewSet(ModelViewSet):
 
     serializer_class = TranscriptionSerializer
     queryset = Transcription.objects.all()
+    permission_classes = (CreaterOnly,)
+
+    def get_queryset(self):
+        return Transcription.objects.filter(creator=self.request.user)
 
     def get_serializer_class(self):
         """Функция выбора класса - сериализатора в зависимости от метода."""
@@ -126,6 +131,10 @@ class TranscriptionSaveViewSet(ModelViewSet):
 
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
+    permission_classes = (CreaterOnly,)
+
+    def get_queryset(self):
+        return Transcription.objects.filter(creator=self.request.user)
 
 
 class TranscriptionPartialViewSet(ModelViewSet):
@@ -133,6 +142,10 @@ class TranscriptionPartialViewSet(ModelViewSet):
 
     queryset = Transcription.objects.all()
     serializer_class = TranscriptionPartialSerializer
+    permission_classes = (CreaterOnly,)
+
+    def get_queryset(self):
+        return Transcription.objects.filter(creator=self.request.user)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

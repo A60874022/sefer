@@ -171,7 +171,7 @@ def post_empty_text_block(request, *args, **kwargs):
         AssertionError("Ошибка при получении API")
 
     transcription = Transcription.objects.create(
-        creator_id=creator.id,
+        # creator_id=creator.id,
         name=name,
         audio=audio,
         transcription_date=timezone.now(),
