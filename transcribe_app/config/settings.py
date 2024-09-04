@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     "users.apps.UsersConfig",
     "transcription.apps.TranscriptionConfig",
     "api.apps.ApiConfig",
+    'import_export',
 )
 
 MIDDLEWARE = (

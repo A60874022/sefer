@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.utils.timezone import now
+from import_export.admin import ExportMixin
 
 from .models import (City, Country, Keywords, Personalities, TextBlock,
                      Transcription)
@@ -12,8 +13,13 @@ class TextBlockInline(admin.StackedInline):
     classes = ["collapse"]
 
 
+from import_export import fields, widgets
+from import_export.admin import ExportActionMixin, ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget, NumberWidget
+
+
 @admin.register(Transcription)
-class TranscriptionAdmin(admin.ModelAdmin):
+class TranscriptionAdmin(ExportMixin, admin.ModelAdmin):
     """Класс для админпанели представления класса Transcription."""
 
     list_display = (
@@ -26,11 +32,12 @@ class TranscriptionAdmin(admin.ModelAdmin):
         "last_updated",
         "creator",
     )
+    list_display_links = ("id", "name")
     search_fields = ("id", "name")
     list_filter = ("transcription_status",)
     ordering = ("id", "name", "audio", "last_updated")
     inlines = [TextBlockInline]
-    readonly_fields = ("id", "last_updated")
+    readonly_fields = ("id", "last_updated", "transcription_status")
 
     def get_readonly_fields(self, request, obj=None):
         """
@@ -55,7 +62,7 @@ class CityAdmin(ModelAdmin):
     list_display = ("id", "name", "country", "last_updated", "confirmed", "creator")
     search_fields = ("id", "name", "confirmed")
     list_filter = ("country__cities", "confirmed")
-
+    list_display_links = ("id", "name")
     readonly_fields = ("id", "last_updated")
     ordering = ("id", "name", "last_updated", "confirmed")
 
@@ -108,8 +115,12 @@ class KeywordsAdmin(admin.ModelAdmin):
         "name_en",
         "last_updated",
     )
+    list_display_links = ("id", "name", "name_en")
     search_fields = ("id", "name", "name_en", "parent")
-    readonly_fields = ("id", "last_updated")
+    readonly_fields = (
+        "id",
+        "last_updated",
+    )
     ordering = ("id", "name", "name_en", "last_updated")
     fieldsets = (
         (None, {"fields": ("name", "name_en", "parent")}),
@@ -136,6 +147,7 @@ class CountryAdmin(ModelAdmin):
         "confirmed",
     )
     list_filter = ("category", "confirmed")
+    list_display_links = ("id", "name", "name_en")
     ordering = ("id", "name", "name_en", "confirmed")
     search_fields = ("id", "name", "name_en", "category", "confirmed")
 
