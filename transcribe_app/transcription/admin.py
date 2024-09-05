@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.utils.timezone import now
+from import_export import fields, resources, widgets
+from import_export.admin import ExportMixin
+from import_export.widgets import ForeignKeyWidget
 
 from .models import (City, Country, Keywords, Personalities, TextBlock,
                      Transcription)
@@ -138,8 +141,42 @@ class CountryAdmin(ModelAdmin):
     list_filter = ("category", "confirmed")
     ordering = ("id", "name", "name_en", "confirmed")
     search_fields = ("id", "name", "name_en", "category", "confirmed")
-
-    def make_confirmed(self, request, queryset):
-        queryset.update(confirmed=True)
-
     fieldsets = ((None, {"fields": ("name", "name_en", "confirmed", "category")}),)
+
+
+class TextBlockResource(resources.ModelResource):
+    """Класс для экспорта связанных данных в Эксель"""
+    transcription = fields.Field(
+        column_name="transcription",
+        attribute="transcription",
+        widget=ForeignKeyWidget(Transcription, field="name", coerce_to_string=True),
+    )
+    keywords = fields.Field(
+        column_name="keywords",
+        attribute="keywords",
+        widget=widgets.ManyToManyWidget(Keywords, field="name", separator=","),
+    )
+    personalities = fields.Field(
+        column_name="personalities",
+        attribute="personalities",
+        widget=widgets.ManyToManyWidget(Personalities, field="name", separator=","),
+    )
+    cities = fields.Field(
+        column_name="cities",
+        attribute="cities",
+        widget=widgets.ManyToManyWidget(City, field="name", separator=","),
+    )
+    countries = fields.Field(
+        column_name="countries",
+        attribute="countries",
+        widget=widgets.ManyToManyWidget(Country, field="name", separator=","),
+    )
+
+    class Meta:
+        model = TextBlock
+
+
+@admin.register(TextBlock)
+class TextBlockAdmin(ExportMixin, admin.ModelAdmin):
+    """Класс для админпанели представления класса TextBlock."""
+    resource_class = TextBlockResource
