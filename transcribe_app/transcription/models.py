@@ -12,6 +12,7 @@ class Transcription(models.Model):
         "Аудио", upload_to="transcription/audio", blank=True, null=True
     )
     name = models.CharField("Название", max_length=60, blank=True)
+    time_total = models.PositiveIntegerField("Длительность аудио", blank=True)
     code = models.CharField(
         "Шифр",
         max_length=100,

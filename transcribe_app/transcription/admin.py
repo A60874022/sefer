@@ -20,6 +20,7 @@ class TranscriptionAdmin(admin.ModelAdmin):
         "id",
         "name",
         "audio",
+        "time_total",
         "code",
         "transcription_status",
         "transcription_date",
@@ -31,7 +32,7 @@ class TranscriptionAdmin(admin.ModelAdmin):
     list_filter = ("transcription_status",)
     ordering = ("id", "name", "audio", "last_updated")
     inlines = [TextBlockInline]
-    readonly_fields = ("id", "last_updated", "transcription_status")
+    readonly_fields = ("id", "last_updated", "transcription_status", "creator",)
 
     def get_readonly_fields(self, request, obj=None):
         """

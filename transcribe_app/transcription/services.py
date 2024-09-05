@@ -140,6 +140,7 @@ def post_table_transcription(request, *args, **kwargs):
         name = request.data["name"]
         partial = request.GET.get("partial")
         audio = request.data["audio"]
+        time_total = request.data["time_total"]
         request_user = request.user
         creator = User.objects.filter(username=request_user).first()
         transcription_status = request.data["transcription_status"]
@@ -153,6 +154,7 @@ def post_table_transcription(request, *args, **kwargs):
             audio=audio,
             transcription_date=transcription_date,
             transcription_status=transcription_status,
+            time_total=time_total
         )
         return transcription
     else:
@@ -167,14 +169,15 @@ def post_empty_text_block(request, *args, **kwargs):
         request_user = request.user
         creator = User.objects.filter(username=request_user).first()
         transcription_status = request.data["transcription_status"]
+        time_total = request.data["time_total"]
     except:
         AssertionError("Ошибка при получении API")
 
     transcription = Transcription.objects.create(
-        # creator_id=creator.id,
         name=name,
         audio=audio,
         transcription_date=timezone.now(),
         transcription_status=transcription_status,
+        time_total=time_total
     )
     return transcription

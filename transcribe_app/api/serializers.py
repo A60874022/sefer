@@ -118,6 +118,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
             "audio",
             "transcription_status",
             "creator",
+            "time_total",
         )
 
     @transaction.atomic
@@ -161,6 +162,8 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
             "audio",
             "transcription_status",
             "creator",
+            "time_total",
+            "transcription_date",
         )
 
 
