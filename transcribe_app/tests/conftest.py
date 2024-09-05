@@ -81,6 +81,7 @@ def create_transcription_2(creator):
         code="modern",
         transcription_status="not_sent",
         creator_id=creator.id,
+        time_total=10,
     )
 
 
@@ -92,6 +93,7 @@ def create_transcription(creator):
         code="озера",
         transcription_status="not_sent",
         creator_id=creator.id,
+        time_total=10,
     )
 
 
