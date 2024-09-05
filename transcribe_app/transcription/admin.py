@@ -134,7 +134,7 @@ class KeywordsAdmin(admin.ModelAdmin):
 
 @admin.register(Country)
 class CountryAdmin(ModelAdmin):
-    """Класс для админпанели представления класса Country."""
+    """Класс для админпанели представления класса Country"""
 
     list_display = (
         "id",
