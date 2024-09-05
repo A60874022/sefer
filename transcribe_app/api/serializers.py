@@ -169,4 +169,5 @@ class TranscriptionPartialSerializer(serializers.ModelSerializer):
 
 class TranscriptionGetSerializer(TranscriptionPartialSerializer):
     """Сериализатор для get запроса при автоматической полной расшифровки аудио."""
+
     pass
