@@ -13,6 +13,7 @@ class TextBlockInline(admin.StackedInline):
     model = TextBlock
     extra = 1
     classes = ["collapse"]
+    filter_horizontal = ["keywords", "personalities", "cities", "countries"]
 
 
 @admin.register(Transcription)
@@ -35,7 +36,7 @@ class TranscriptionAdmin(admin.ModelAdmin):
     list_filter = ("transcription_status",)
     ordering = ("id", "name", "audio", "last_updated")
     inlines = [TextBlockInline]
-    readonly_fields = ("id", "last_updated", "transcription_status", "creator",)
+    readonly_fields = ("id", "last_updated", "transcription_status")
 
     def get_readonly_fields(self, request, obj=None):
         """
@@ -57,7 +58,15 @@ class TranscriptionAdmin(admin.ModelAdmin):
 class CityAdmin(ModelAdmin):
     """Класс для админпанели представления класса City."""
 
-    list_display = ("id", "name", "country", "last_updated", "confirmed", "creator")
+    list_display = (
+        "id",
+        "name",
+        "name_en",
+        "country",
+        "last_updated",
+        "confirmed",
+        "creator",
+    )
     search_fields = ("id", "name", "confirmed")
     list_filter = ("country__cities", "confirmed")
     list_display_links = ("id", "name")
@@ -107,7 +116,7 @@ class PersonalitiesAdmin(admin.ModelAdmin):
 class KeywordsAdmin(admin.ModelAdmin):
     """Класс для админпанели представления класса Keywords."""
 
-    list_display = ("id", "name", "name_en", "parent", "last_updated")
+    list_display = ("id", "name", "name_en", "parent", "last_updated", "creator")
     list_filter = (
         "name",
         "name_en",
@@ -131,6 +140,13 @@ class KeywordsAdmin(admin.ModelAdmin):
         ),
     )
 
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            # Только при создании нового объекта
+            obj.creator = request.user
+        obj.last_updated = now()
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(Country)
 class CountryAdmin(ModelAdmin):
@@ -143,6 +159,7 @@ class CountryAdmin(ModelAdmin):
         "category",
         "last_updated",
         "confirmed",
+        "creator",
     )
     list_filter = ("category", "confirmed")
     list_display_links = ("id", "name", "name_en")
@@ -150,9 +167,17 @@ class CountryAdmin(ModelAdmin):
     search_fields = ("id", "name", "name_en", "category", "confirmed")
     fieldsets = ((None, {"fields": ("name", "name_en", "confirmed", "category")}),)
 
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            # Только при создании нового объекта
+            obj.creator = request.user
+        obj.last_updated = now()
+        super().save_model(request, obj, form, change)
+
 
 class TextBlockResource(resources.ModelResource):
     """Класс для экспорта связанных данных в Эксель"""
+
     transcription = fields.Field(
         column_name="transcription",
         attribute="transcription",
@@ -186,4 +211,5 @@ class TextBlockResource(resources.ModelResource):
 @admin.register(TextBlock)
 class TextBlockAdmin(ExportMixin, admin.ModelAdmin):
     """Класс для админпанели представления класса TextBlock."""
+
     resource_class = TextBlockResource

@@ -154,7 +154,7 @@ def post_table_transcription(request, *args, **kwargs):
             audio=audio,
             transcription_date=transcription_date,
             transcription_status=transcription_status,
-            time_total=time_total
+            time_total=time_total,
         )
         return transcription
     else:
@@ -178,6 +178,6 @@ def post_empty_text_block(request, *args, **kwargs):
         audio=audio,
         transcription_date=timezone.now(),
         transcription_status=transcription_status,
-        time_total=time_total
+        time_total=time_total,
     )
     return transcription

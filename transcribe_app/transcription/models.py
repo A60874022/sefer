@@ -25,7 +25,7 @@ class Transcription(models.Model):
         "Статус расшифровки",
         max_length=20,
         choices=[
-            ("not_sent", "Не отправлено"),
+            ("not_sent", "-"),
             ("sent", "Отправлено"),
             ("received", "Готово"),
         ],
@@ -34,7 +34,7 @@ class Transcription(models.Model):
     transcription_date = models.DateTimeField(
         "Дата и время расшифровки", null=True, blank=True
     )
-    last_updated = models.DateTimeField("Последнее обновление", auto_now=True)
+    last_updated = models.DateTimeField("Обновлено", auto_now=True)
     creator = models.ForeignKey(
         User,
         verbose_name="редактор",
@@ -63,13 +63,13 @@ class Country(models.Model):
     """Модель, представляющая Страны."""
 
     name = models.CharField(
-        "Страна",
+        "Название (рус.)",
         max_length=100,
         unique=True,
         error_messages={"unique": "Страна с таким названием уже существует"},
     )
     name_en = models.CharField(
-        "Имя (англ.)",
+        "Название (англ.)",
         max_length=100,
         unique=True,
         null=True,
@@ -90,6 +90,11 @@ class Country(models.Model):
         ],
     )
     last_updated = models.DateTimeField("Обновлено", auto_now=True)
+    creator = models.ForeignKey(
+        User,
+        verbose_name="редактор",
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return self.name
@@ -103,12 +108,19 @@ class City(models.Model):
     """Модель, представляющая Места."""
 
     name = models.CharField(
-        "Место",
+        "Название (рус)",
         max_length=100,
         unique=True,
         error_messages={"unique": "Место с таким названием уже существует"},
     )
-
+    name_en = models.CharField(
+        "Название (англ.)",
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True,
+        error_messages={"unique": "Место с таким названием уже существует"},
+    )
     country = models.ForeignKey(
         Country,
         on_delete=models.DO_NOTHING,
@@ -124,6 +136,7 @@ class City(models.Model):
             ("Подтверждено", "Да"),
             ("Не подтверждено", "Нет"),
         ],
+        default="Нет",
     )
     creator = models.ForeignKey(
         User,
@@ -142,7 +155,7 @@ class City(models.Model):
 class Personalities(models.Model):
     """Модель, представляющая персоналии."""
 
-    name = models.CharField("Персоналия", max_length=100, unique=True)
+    name = models.CharField("Имя (рус.)", max_length=100, unique=True)
     name_en = models.CharField(
         "Имя (англ.)", max_length=100, unique=True, null=True, blank=True
     )
@@ -155,6 +168,7 @@ class Personalities(models.Model):
             ("Подтверждено", "Да"),
             ("Не подтверждено", "Нет"),
         ],
+        default="Нет",
     )
     creator = models.ForeignKey(
         User,
@@ -174,14 +188,14 @@ class Keywords(models.Model):
     """Модель, представляющая ключевые слова."""
 
     name = models.CharField(
-        "Ключевое слово (рус.)",
+        "Название (рус.)",
         max_length=100,
         unique=True,
         error_messages={"unique": "Ключевое слово с таким названием уже существует"},
     )
 
     name_en = models.CharField(
-        "Ключевое слово (англ.)",
+        "Название (англ.)",
         max_length=100,
         unique=True,
         null=True,
@@ -191,11 +205,16 @@ class Keywords(models.Model):
     parent = models.ForeignKey(
         "Keywords",
         on_delete=models.CASCADE,
-        verbose_name="родитель",
+        verbose_name="Категория/Подкатегория",
         blank=True,
         null=True,
     )
     last_updated = models.DateTimeField("Обновлено", auto_now=True)
+    creator = models.ForeignKey(
+        User,
+        verbose_name="редактор",
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return f"{self.name}"

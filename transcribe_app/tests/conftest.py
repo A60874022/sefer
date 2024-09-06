@@ -28,23 +28,31 @@ def api_client():
 
 
 @pytest.fixture
-def create_countries():
+def create_countries(creator):
     """Фикстура для создания записи о стране в БД."""
     return Country.objects.create(
-        name="Россия", category="modern", confirmed="Подтверждено"
+        name="Россия",
+        category="modern",
+        confirmed="Подтверждено",
+        creator_id=creator.id,
     )
 
 
 @pytest.fixture
-def countries_payload():
+def countries_payload(creator):
     """Фикстура для создания json для сущности страна."""
-    return {"name": "Россия", "category": "modern", "confirmed": "Подтверждено"}
+    return {
+        "name": "Россия",
+        "category": "modern",
+        "confirmed": "Подтверждено",
+        "creator_id": creator.id,
+    }
 
 
 @pytest.fixture
-def create_keywords():
+def create_keywords(creator):
     """Фикстура для создания записи о слове в БД."""
-    return Keywords.objects.create(name="Горы")
+    return Keywords.objects.create(name="Горы", creator_id=creator.id)
 
 
 @pytest.fixture

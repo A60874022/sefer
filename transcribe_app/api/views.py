@@ -93,6 +93,7 @@ class TranscriptionViewSet(ModelViewSet):
     permission_classes = (CreaterOnly,)
 
     def get_queryset(self):
+        """Функция выбора класса - сериализатора в зависимости от метода."""
         return Transcription.objects.filter(creator=self.request.user)
 
     def get_serializer_class(self):

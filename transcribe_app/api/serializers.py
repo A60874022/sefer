@@ -9,11 +9,14 @@ from transcription.services import create_transcription, delete_file_in_backet
 class KeywordsSerializer(serializers.ModelSerializer):
     """Сериализатор для ключевых слов."""
 
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Keywords
         fields = (
             "id",
             "name",
+            "creator",
         )
 
 
@@ -35,6 +38,7 @@ class CitySerializer(serializers.ModelSerializer):
 class CountrySerializer(serializers.ModelSerializer):
     """Сериализатор для Стран."""
 
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
     cities = CitySerializer(many=True, read_only=True)
 
     class Meta:
@@ -43,18 +47,18 @@ class CountrySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "cities",
+            "creator",
         )
 
 
 class CountryGlossarySerializer(serializers.ModelSerializer):
     """Сериализатор для Стран в глоссарии."""
 
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Country
-        fields = (
-            "id",
-            "name",
-        )
+        fields = ("id", "name", "creator")
 
 
 class PersonalitiesSerializer(serializers.ModelSerializer):
