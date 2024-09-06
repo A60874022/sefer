@@ -178,7 +178,7 @@ class TranscriptionPartialViewSet(ModelViewSet):
 
 class EmptyTextBlockViewSet(viewsets.ViewSet):
     """Сохранение файла без расшифровки и
-    пустых текстовых блоков в заданной количестве.
+    пустых текстовых блоков в заданной количестве
     """
 
     def create(self, request):
