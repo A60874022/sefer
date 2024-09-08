@@ -19,6 +19,7 @@ django-filter==23.2
 django-templated-mail==1.1.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
+
 djoser==2.2.0
 drf-yasg==1.21.5
 filelock==3.14.0
@@ -64,3 +65,5 @@ tzdata==2024.1
 uritemplate==4.1.1
 urllib3==1.26.16
 virtualenv==20.26.2
+django-import-export[all]==4.1.1
+django-mptt==0.16.0
