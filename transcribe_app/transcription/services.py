@@ -56,8 +56,8 @@ def get_audio_file(obj_id: int) -> str:
 def delete_file_in_backet(obj_id: int) -> None:
     """Функция для удаления файла из бакета."""
     session = boto3.session.Session(
-        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf",  # settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",  # settings.AWS_SECRET_ACCESS_KEY,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
         region_name="ru-central1",
     )
     s3 = session.client(
@@ -73,8 +73,8 @@ def delete_file_in_backet(obj_id: int) -> None:
 def upload_file_to_bucket(obj_id: int) -> None:
     """Функция для загрузки файла в бакет."""
     session = boto3.session.Session(
-        aws_access_key_id="YCAJEM-ILuTzdEbu8c7Ozu3sf",  # settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif",  # settings.AWS_SECRET_ACCESS_KEY,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
         region_name="ru-central1",
     )
     s3 = session.client(

@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "import_export",
+    "api.apps.ApiConfig",
     "rest_framework",
     "django_filters",
     "djoser",
@@ -36,7 +37,7 @@ INSTALLED_APPS = (
     "drf_yasg",
     "users.apps.UsersConfig",
     "transcription.apps.TranscriptionConfig",
-    "api.apps.ApiConfig",
+
 )
 
 MIDDLEWARE = (
@@ -152,8 +153,7 @@ TRANSCRIBE_API_URL = (
 )
 
 AWS_ACCESS_KEY_ID = os.environ.get(
-    "AWS_ACCESS_KEY_ID", default="YCAJEM-ILuTzdEbu8c7Ozu3sf"
-)
+    "AWS_ACCESS_KEY_ID")
+
 AWS_SECRET_ACCESS_KEY = os.environ.get(
-    "AWS_SECRET_ACCESS_KEY", default="YCMrsyCpFN9iFBhb6GWkRnKp7_hpzk87Nx29jDif"
-)
+    "AWS_SECRET_ACCESS_KEY")
