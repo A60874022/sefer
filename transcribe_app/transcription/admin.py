@@ -4,6 +4,7 @@ from django.utils.timezone import now
 from import_export import fields, resources, widgets
 from import_export.admin import ExportMixin
 from import_export.widgets import ForeignKeyWidget
+from mptt.admin import MPTTModelAdmin
 
 from .models import (City, Country, Keywords, Personalities, TextBlock,
                      Transcription)
@@ -113,7 +114,7 @@ class PersonalitiesAdmin(admin.ModelAdmin):
 
 
 @admin.register(Keywords)
-class KeywordsAdmin(admin.ModelAdmin):
+class KeywordsAdmin(MPTTModelAdmin):
     """Класс для админпанели представления класса Keywords."""
 
     list_display = ("id", "name", "name_en", "parent", "last_updated", "creator")

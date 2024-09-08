@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     "rest_framework",
     "django_filters",
     "djoser",
+    "mptt",
     "rest_framework_simplejwt",
     "drf_yasg",
     "users.apps.UsersConfig",

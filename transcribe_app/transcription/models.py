@@ -2,6 +2,7 @@ import os
 
 from django.db import models
 from django.dispatch import receiver
+from mptt.models import MPTTModel, TreeForeignKey
 from users.models import User
 
 
@@ -184,7 +185,7 @@ class Personalities(models.Model):
         verbose_name_plural = "Персоналии"
 
 
-class Keywords(models.Model):
+class Keywords(MPTTModel):
     """Модель, представляющая ключевые слова."""
 
     name = models.CharField(
@@ -202,7 +203,7 @@ class Keywords(models.Model):
         blank=True,
         error_messages={"unique": "Ключевое слово с таким названием уже существует"},
     )
-    parent = models.ForeignKey(
+    parent = TreeForeignKey(
         "Keywords",
         on_delete=models.CASCADE,
         verbose_name="Категория/Подкатегория",
@@ -222,6 +223,9 @@ class Keywords(models.Model):
     class Meta:
         verbose_name = "Ключевое слово"
         verbose_name_plural = "Ключевые слова"
+
+    class MPTTMeta:
+        order_insertion_by = ["parent"]
 
 
 class TextBlock(models.Model):
