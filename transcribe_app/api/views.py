@@ -183,7 +183,7 @@ class EmptyTextBlockViewSet(viewsets.ViewSet):
 
     def create(self, request):
         transcription = post_empty_text_block(request)
-        quantity_textblocks = int(request.data["quantity"])
+        count_textblocks = int(request.data["time_total"])
         TextBlock.objects.bulk_create(
             [
                 TextBlock(
@@ -192,7 +192,7 @@ class EmptyTextBlockViewSet(viewsets.ViewSet):
                     text="",
                     transcription=transcription,
                 )
-                for i in range(1, quantity_textblocks - 1)
+                for i in range(1, count_textblocks - 1)
             ]
         )
         return Response(status=status.HTTP_201_CREATED)
