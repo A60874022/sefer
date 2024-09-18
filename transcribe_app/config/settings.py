@@ -145,7 +145,7 @@ SWAGGER_SETTINGS = {
 }
 
 YC_IAM_TOKEN = os.environ.get(
-    "YC_IAM_TOKEN", default="AQVNzQZst92-SQYgP5zowxzTa7L6GrG0FT3OXhtZ"
+    "YC_IAM_TOKEN", default=""
 )
 YC_BUCKET_NAME = os.environ.get("YC_BUCKET_NAME", default="sefer")
 TRANSCRIBE_API_URL = (
